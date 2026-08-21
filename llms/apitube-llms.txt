@@ -1,0 +1,402 @@
+# APITube News API
+
+> APITube provides a comprehensive News API that aggregates and structures news articles from thousands of sources worldwide. The platform offers real-time news data, advanced filtering, sentiment analysis, and full-text search capabilities. Our API is designed for developers, researchers, and businesses who need reliable access to global news data.
+
+## Overview
+
+APITube News API is a powerful platform for accessing structured news data from around the world. The service provides:
+
+- Real-time news aggregation from 500,000+ verified sources
+- Support for 60+ languages
+- Coverage of 180+ countries and territories
+- Advanced filtering by topics, entities, sentiment, and more
+- Historical news data access
+- Sentiment analysis and NLP processing
+- Export capabilities (JSON, XML, CSV, XLSX, TSV)
+
+## Pricing
+
+APITube offers five subscription tiers with monthly credits:
+
+- **Free** — $0/month, daily credit reset, ideal for testing and prototyping
+- **Starter** — $29/month, 10,000 requests, for solo developers and side projects
+- **Basic** — $99/month, suitable for small applications and side projects
+- **Professional** — $199/month, for production applications with growing volume
+- **Corporate** — $599/month, for high-volume commercial use with priority support
+
+See [https://apitube.io/pricing](https://apitube.io/pricing) for current plans, features and credit allocations.
+
+## Key API Endpoints
+
+Base URL: `https://api.apitube.io`. All endpoints return JSON by default; XML, CSV, XLSX, TSV exports are also supported.
+
+- `GET /v1/news/everything` — Search across all indexed articles with advanced filters (keywords, sentiment, entities, language, country, category, date range, source)
+- `GET /v1/news/top-headlines` — Latest breaking news headlines, filterable by country and category
+- `GET /v1/news/article` — Retrieve a specific article by Article ID
+- `GET /v1/news/story` — Retrieve a story (clustered articles) by Article ID
+- `GET /v1/news/category` — Get articles by category (IAB taxonomy)
+- `GET /v1/news/topic` — Get articles by topic
+- `GET /v1/news/industry` — Get articles by industry
+- `GET /v1/news/entity` — Get articles mentioning a specific entity (person, organization, location)
+- `GET /v1/news/stream` — Real-time article stream via Server-Sent Events (SSE)
+- `GET /v1/news/trends` — Trending values for a given field with time-bucket comparison
+- `GET /v1/suggest/entities` — Autocomplete search for entities
+- `GET /v1/balance` — Check API key credit balance
+
+Authentication: pass your API key via `api_key` query parameter, `X-API-Key` header, or `Authorization: Bearer YOUR_API_KEY` header. See [docs.apitube.io](https://docs.apitube.io) for complete reference.
+
+## Browser Tools (WebMCP)
+
+When this site is opened in a WebMCP-capable browser, the following tools are registered on `navigator.modelContext` and can be invoked directly by AI agents acting on the page:
+
+- `search_site` — full-text search across documentation, blog, help center and datasets; returns matching pages with title, URL and snippet.
+- `navigate` — open a key page (home, pricing, product, compare, demo, blog, cookbook, datasets, help-center, careers, forum, contact, search).
+- `try_news_api_demo` — run a sample News API query and return one example article to preview the response shape (no authentication required).
+
+## Core Documentation
+
+- [Quick Start Guide](https://apitube.io/product/news-api/quick-start): Get started with the News API in minutes
+- [API Documentation](https://apitube.io/product/news-api): Complete API reference and endpoints
+- [Use Cases](https://apitube.io/product/use-cases): Real-world applications and examples
+- [How It Works](https://apitube.io/product/how-it-works): Technical architecture and data processing
+- [Structured News Data](https://apitube.io/product/structured-news-data): Understanding the data format
+- [Integrations](https://apitube.io/product/news-api/integrations): Integration examples for various platforms
+- [Pricing](https://apitube.io/pricing): Subscription plans and pricing
+
+## Solutions
+
+### Monitoring & Analysis
+
+- [Brand Monitoring](https://apitube.io/solutions/brand-monitoring): Track brand mentions and reputation
+- [Media Monitoring](https://apitube.io/solutions/media-monitoring): Monitor media coverage across sources
+- [Emergency Monitoring](https://apitube.io/solutions/emergency-monitoring): Real-time crisis and emergency tracking
+- [Risk Intelligence](https://apitube.io/solutions/risk-intelligence): Identify and assess business risks
+- [Market Intelligence](https://apitube.io/solutions/market-intelligence): Gather competitive intelligence
+
+### Industry-Specific APIs
+
+- [AI News API](https://apitube.io/solutions/ai-news-api): Artificial intelligence industry news
+- [Technology News API](https://apitube.io/solutions/technology-news-api): Tech sector coverage
+- [Financial News API](https://apitube.io/solutions/financial-news-api): Financial markets and business news
+- [Crypto News API](https://apitube.io/solutions/crypto-news-api): Cryptocurrency and blockchain news
+- [Energy News API](https://apitube.io/solutions/energy-news-api): Energy sector coverage
+- [Healthcare/Pharmacy News API](https://apitube.io/solutions/pharmacy-news-api): Medical and pharmaceutical news
+- [Automotive News API](https://apitube.io/solutions/automotive-news-api): Automotive industry updates
+- [Real Estate News API](https://apitube.io/solutions/real-estate-news-api): Property market news
+- [Aerospace News API](https://apitube.io/solutions/aerospace-news-api): Aviation and space industry
+
+### Data Export & Processing
+
+- [Export to JSON](https://apitube.io/solutions/export-to-json): Export news data (supports JSON, XML, CSV, XLSX, TSV formats)
+
+## Help Center
+
+- [Help Center](https://support.apitube.io/en): APITube support articles and guides
+
+## Cookbook
+
+Practical examples and code snippets for common tasks:
+
+- [Get news from specific publications about technology](https://apitube.io/cookbook/get-news-from-specific-publications-about-technology)
+- [Articles about the gaming industry from specific publications](https://apitube.io/cookbook/gaming-news-from-specific-sources)
+- [Articles published in the last week about climate change](https://apitube.io/cookbook/recent-articles-climate-change)
+- [News from German sources about the automotive industry](https://apitube.io/cookbook/german-news-about-automotive)
+- [Articles mentioning Elon Musk with a positive sentiment](https://apitube.io/cookbook/positive-articles-about-elon-musk)
+- [Recent articles published by The New York Times](https://apitube.io/cookbook/recent-articles-from-nyt)
+- [Get latest news articles about a specific topic](https://apitube.io/cookbook/get-latest-news-articles-about-crypto)
+- [Get Technology News Articles in Japanese Excluding those from New York](https://apitube.io/cookbook/get-technology-news-articles-in-japanese-excluding-new-york)
+- [Get the latest news articles from France](https://apitube.io/cookbook/get-latest-news-articles-from-france)
+- [Get latest news from US, UK, and Japan in New York, London, and Tokyo and export as TSV](https://apitube.io/cookbook/get-latest-news-from-us-uk-and-japan-in-new-york-london-and-tokyo-and-export-as-)
+
+View more recipes at [https://apitube.io/cookbook](https://apitube.io/cookbook)
+
+## Blog
+
+Latest articles and updates:
+
+- [NewsCatcher API Alternative 2026: Honest Comparison](https://apitube.io/blog/post/newscatcher-api-vs-apitube-developer-comparison)
+- [GNews API vs APITube 2026: Honest Head-to-Head](https://apitube.io/blog/post/gnews-api-vs-apitube)
+- [NewsData.io vs APITube: Pricing, Features, Trade-offs](https://apitube.io/blog/post/newsdata-io-vs-apitube-honest-comparison)
+- [Google News API Alternatives: 5 Scored on Docs (2026)](https://apitube.io/blog/post/google-news-api-alternatives-documentation)
+- [NewsAPI Alternative in 2026: Stop Paying $449/month](https://apitube.io/blog/post/stop-paying-449-news-api)
+
+View more at [https://apitube.io/blog](https://apitube.io/blog)
+
+## Free Datasets
+
+- [YouTube](https://apitube.io/free-datasets/youtube)
+- [Xiaomi](https://apitube.io/free-datasets/xiaomi)
+- [WhatsApp](https://apitube.io/free-datasets/whatsapp)
+- [Volkswagen](https://apitube.io/free-datasets/volkswagen)
+- [Toyota](https://apitube.io/free-datasets/toyota)
+- [TikTok](https://apitube.io/free-datasets/tiktok)
+- [Tesla](https://apitube.io/free-datasets/tesla)
+- [Telegram](https://apitube.io/free-datasets/telegram)
+- [Spotify](https://apitube.io/free-datasets/spotify)
+- [SpaceX](https://apitube.io/free-datasets/spacex)
+- [Sony](https://apitube.io/free-datasets/sony)
+- [Snapchat](https://apitube.io/free-datasets/snapchat)
+- [Samsung](https://apitube.io/free-datasets/samsung)
+- [Pfizer](https://apitube.io/free-datasets/pfizer)
+- [Oracle](https://apitube.io/free-datasets/oracle)
+- [OpenAI](https://apitube.io/free-datasets/openai)
+- [Nvidia](https://apitube.io/free-datasets/nvidia)
+- [Nintendo](https://apitube.io/free-datasets/nintendo)
+- [Netflix](https://apitube.io/free-datasets/netflix)
+- [Moderna](https://apitube.io/free-datasets/moderna)
+- [Microsoft](https://apitube.io/free-datasets/microsoft)
+- [Metaverse](https://apitube.io/free-datasets/metaverse)
+- [Mercedes](https://apitube.io/free-datasets/mercedes)
+- [LinkedIn](https://apitube.io/free-datasets/linkedin)
+- [Lenovo](https://apitube.io/free-datasets/lenovo)
+- [Instagram](https://apitube.io/free-datasets/instagram)
+- [Huawei](https://apitube.io/free-datasets/huawei)
+- [HP](https://apitube.io/free-datasets/hp)
+- [Honda](https://apitube.io/free-datasets/honda)
+- [Google](https://apitube.io/free-datasets/google)
+- [Ford](https://apitube.io/free-datasets/ford)
+- [Facebook](https://apitube.io/free-datasets/facebook)
+- [Ethereum](https://apitube.io/free-datasets/ethereum)
+- [Dell](https://apitube.io/free-datasets/dell)
+- [Cryptocurrency](https://apitube.io/free-datasets/cryptocurrency)
+- [Corona Virus](https://apitube.io/free-datasets/corona-virus)
+- [Cisco](https://apitube.io/free-datasets/cisco)
+- [ChatGPT](https://apitube.io/free-datasets/chatgpt)
+- [Boeing](https://apitube.io/free-datasets/boeing)
+- [BMW](https://apitube.io/free-datasets/bmw)
+- [Blockchain](https://apitube.io/free-datasets/blockchain)
+- [Bitcoin](https://apitube.io/free-datasets/bitcoin)
+- [Asus](https://apitube.io/free-datasets/asus)
+- [Apple](https://apitube.io/free-datasets/apple)
+- [Amazon](https://apitube.io/free-datasets/amazon)
+- [Airbus](https://apitube.io/free-datasets/airbus)
+- [Adobe](https://apitube.io/free-datasets/adobe)
+
+## Markdown Versions
+
+Plain-text Markdown versions of key pages, optimized for LLM ingestion. Append `.md` to a page URL to fetch its Markdown source:
+
+- [https://apitube.io/blog/post/5-news-apis-startup-budget.md](https://apitube.io/blog/post/5-news-apis-startup-budget.md)
+- [https://apitube.io/blog/post/apitube-acquires-getnewsapi.md](https://apitube.io/blog/post/apitube-acquires-getnewsapi.md)
+- [https://apitube.io/blog/post/best-financial-news-api-trading.md](https://apitube.io/blog/post/best-financial-news-api-trading.md)
+- [https://apitube.io/blog/post/best-free-news-apis-honest-limitations.md](https://apitube.io/blog/post/best-free-news-apis-honest-limitations.md)
+- [https://apitube.io/blog/post/best-news-api-content-creators-media-companies.md](https://apitube.io/blog/post/best-news-api-content-creators-media-companies.md)
+- [https://apitube.io/blog/post/best-news-api-for-mobile-app-development.md](https://apitube.io/blog/post/best-news-api-for-mobile-app-development.md)
+- [https://apitube.io/blog/post/best-news-api-for-saas.md](https://apitube.io/blog/post/best-news-api-for-saas.md)
+- [https://apitube.io/blog/post/best-news-api-javascript-nodejs-2026.md](https://apitube.io/blog/post/best-news-api-javascript-nodejs-2026.md)
+- [https://apitube.io/blog/post/best-news-api-marketing-brand-monitoring-2026.md](https://apitube.io/blog/post/best-news-api-marketing-brand-monitoring-2026.md)
+- [https://apitube.io/blog/post/best-news-api-python-2026.md](https://apitube.io/blog/post/best-news-api-python-2026.md)
+- [https://apitube.io/blog/post/best-news-api-react-2026.md](https://apitube.io/blog/post/best-news-api-react-2026.md)
+- [https://apitube.io/blog/post/best-news-api-sentiment-nlp-2026.md](https://apitube.io/blog/post/best-news-api-sentiment-nlp-2026.md)
+- [https://apitube.io/blog/post/bing-news-api-retired-replacement-guide.md](https://apitube.io/blog/post/bing-news-api-retired-replacement-guide.md)
+- [https://apitube.io/blog/post/build-django-news-portal-tutorial.md](https://apitube.io/blog/post/build-django-news-portal-tutorial.md)
+- [https://apitube.io/blog/post/cookbook.md](https://apitube.io/blog/post/cookbook.md)
+- [https://apitube.io/blog/post/crypto-news-api.md](https://apitube.io/blog/post/crypto-news-api.md)
+- [https://apitube.io/blog/post/cybersecurity-threat-intelligence-feed.md](https://apitube.io/blog/post/cybersecurity-threat-intelligence-feed.md)
+- [https://apitube.io/blog/post/free-and-premium-datasets.md](https://apitube.io/blog/post/free-and-premium-datasets.md)
+- [https://apitube.io/blog/post/free-for-students-and-educators.md](https://apitube.io/blog/post/free-for-students-and-educators.md)
+- [https://apitube.io/blog/post/gnews-api-vs-apitube.md](https://apitube.io/blog/post/gnews-api-vs-apitube.md)
+- [https://apitube.io/blog/post/google-news-api-alternatives-documentation.md](https://apitube.io/blog/post/google-news-api-alternatives-documentation.md)
+- [https://apitube.io/blog/post/hidden-costs-free-news-apis.md](https://apitube.io/blog/post/hidden-costs-free-news-apis.md)
+- [https://apitube.io/blog/post/how-to-get-started-with-apitube-news-api-a-step-by-step-guide.md](https://apitube.io/blog/post/how-to-get-started-with-apitube-news-api-a-step-by-step-guide.md)
+- [https://apitube.io/blog/post/introduction-to-commodities-market-news.md](https://apitube.io/blog/post/introduction-to-commodities-market-news.md)
+- [https://apitube.io/blog/post/movies-news-api.md](https://apitube.io/blog/post/movies-news-api.md)
+- [https://apitube.io/blog/post/news-api-buyer-guide-2026.md](https://apitube.io/blog/post/news-api-buyer-guide-2026.md)
+- [https://apitube.io/blog/post/news-api-filter-patterns.md](https://apitube.io/blog/post/news-api-filter-patterns.md)
+- [https://apitube.io/blog/post/news-api-pricing-breakdown-2026.md](https://apitube.io/blog/post/news-api-pricing-breakdown-2026.md)
+- [https://apitube.io/blog/post/news-api-quick-start-first-request.md](https://apitube.io/blog/post/news-api-quick-start-first-request.md)
+- [https://apitube.io/blog/post/news-api-rate-limits-compared.md](https://apitube.io/blog/post/news-api-rate-limits-compared.md)
+- [https://apitube.io/blog/post/news-app-scale-millions-users.md](https://apitube.io/blog/post/news-app-scale-millions-users.md)
+- [https://apitube.io/blog/post/newsapi-org-vs-apitube-why-developers-are-switching.md](https://apitube.io/blog/post/newsapi-org-vs-apitube-why-developers-are-switching.md)
+- [https://apitube.io/blog/post/newscatcher-api-vs-apitube-developer-comparison.md](https://apitube.io/blog/post/newscatcher-api-vs-apitube-developer-comparison.md)
+- [https://apitube.io/blog/post/newsdata-io-vs-apitube-honest-comparison.md](https://apitube.io/blog/post/newsdata-io-vs-apitube-honest-comparison.md)
+- [https://apitube.io/blog/post/nextjs-multilingual-news-app-tutorial.md](https://apitube.io/blog/post/nextjs-multilingual-news-app-tutorial.md)
+- [https://apitube.io/blog/post/react-news-dashboard-tutorial.md](https://apitube.io/blog/post/react-news-dashboard-tutorial.md)
+- [https://apitube.io/blog/post/reducing-news-api-costs-optimization.md](https://apitube.io/blog/post/reducing-news-api-costs-optimization.md)
+- [https://apitube.io/blog/post/search-by-category.md](https://apitube.io/blog/post/search-by-category.md)
+- [https://apitube.io/blog/post/search-by-language.md](https://apitube.io/blog/post/search-by-language.md)
+- [https://apitube.io/blog/post/search-positive-negative-news.md](https://apitube.io/blog/post/search-positive-negative-news.md)
+- [https://apitube.io/blog/post/stop-paying-449-news-api.md](https://apitube.io/blog/post/stop-paying-449-news-api.md)
+- [https://apitube.io/blog/post/telegram-news-bot-python.md](https://apitube.io/blog/post/telegram-news-bot-python.md)
+- [https://apitube.io/blog/post/using-postman-collection-with-apitube-io.md](https://apitube.io/blog/post/using-postman-collection-with-apitube-io.md)
+- [https://apitube.io/blog/post/video-games-news-api.md](https://apitube.io/blog/post/video-games-news-api.md)
+- [https://apitube.io/compare-vs-bing-news-api.md](https://apitube.io/compare-vs-bing-news-api.md)
+- [https://apitube.io/compare-vs-contify.md](https://apitube.io/compare-vs-contify.md)
+- [https://apitube.io/compare-vs-gnews-io.md](https://apitube.io/compare-vs-gnews-io.md)
+- [https://apitube.io/compare-vs-mediastack.md](https://apitube.io/compare-vs-mediastack.md)
+- [https://apitube.io/compare-vs-newsapi-ai.md](https://apitube.io/compare-vs-newsapi-ai.md)
+- [https://apitube.io/compare-vs-newsapi-org.md](https://apitube.io/compare-vs-newsapi-org.md)
+- [https://apitube.io/compare-vs-newscatcher.md](https://apitube.io/compare-vs-newscatcher.md)
+- [https://apitube.io/compare-vs-newsdata-io.md](https://apitube.io/compare-vs-newsdata-io.md)
+- [https://apitube.io/compare-vs-perigon.md](https://apitube.io/compare-vs-perigon.md)
+- [https://apitube.io/compare-vs-quantexa.md](https://apitube.io/compare-vs-quantexa.md)
+- [https://apitube.io/compare-vs-scrapingbee.md](https://apitube.io/compare-vs-scrapingbee.md)
+- [https://apitube.io/compare-vs-webz-io.md](https://apitube.io/compare-vs-webz-io.md)
+- [https://apitube.io/compare.md](https://apitube.io/compare.md)
+- [https://apitube.io/cookbook/advanced-faceting-with-multiple-filters.md](https://apitube.io/cookbook/advanced-faceting-with-multiple-filters.md)
+- [https://apitube.io/cookbook/author-expertise-analysis-with-cross-source-tracking.md](https://apitube.io/cookbook/author-expertise-analysis-with-cross-source-tracking.md)
+- [https://apitube.io/cookbook/brand-reputation-analysis-across-markets.md](https://apitube.io/cookbook/brand-reputation-analysis-across-markets.md)
+- [https://apitube.io/cookbook/breaking-news-with-engagement-sorting-and-media.md](https://apitube.io/cookbook/breaking-news-with-engagement-sorting-and-media.md)
+- [https://apitube.io/cookbook/category-time-series-analysis-with-media-filtering.md](https://apitube.io/cookbook/category-time-series-analysis-with-media-filtering.md)
+- [https://apitube.io/cookbook/combined-regular-and-range-faceting.md](https://apitube.io/cookbook/combined-regular-and-range-faceting.md)
+- [https://apitube.io/cookbook/competitive-intelligence-analysis-with-sentiment-tracking.md](https://apitube.io/cookbook/competitive-intelligence-analysis-with-sentiment-tracking.md)
+- [https://apitube.io/cookbook/complete-news-monitoring-solution.md](https://apitube.io/cookbook/complete-news-monitoring-solution.md)
+- [https://apitube.io/cookbook/complex-date-range-analysis-with-precise-timestamps.md](https://apitube.io/cookbook/complex-date-range-analysis-with-precise-timestamps.md)
+- [https://apitube.io/cookbook/comprehensive-analytics-dashboard-query.md](https://apitube.io/cookbook/comprehensive-analytics-dashboard-query.md)
+- [https://apitube.io/cookbook/corporate-social-responsibility-coverage-analysis.md](https://apitube.io/cookbook/corporate-social-responsibility-coverage-analysis.md)
+- [https://apitube.io/cookbook/cross-reference-person-with-organizations-and-locations.md](https://apitube.io/cookbook/cross-reference-person-with-organizations-and-locations.md)
+- [https://apitube.io/cookbook/cross-regional-media-bias-analysis.md](https://apitube.io/cookbook/cross-regional-media-bias-analysis.md)
+- [https://apitube.io/cookbook/efficient-large-dataset-retrieval-with-field-selection.md](https://apitube.io/cookbook/efficient-large-dataset-retrieval-with-field-selection.md)
+- [https://apitube.io/cookbook/entity-correlation-analysis-with-time-series.md](https://apitube.io/cookbook/entity-correlation-analysis-with-time-series.md)
+- [https://apitube.io/cookbook/exact-title-match-in-news.md](https://apitube.io/cookbook/exact-title-match-in-news.md)
+- [https://apitube.io/cookbook/export-articles-to-excel-format.md](https://apitube.io/cookbook/export-articles-to-excel-format.md)
+- [https://apitube.io/cookbook/export-single-article-as-csv.md](https://apitube.io/cookbook/export-single-article-as-csv.md)
+- [https://apitube.io/cookbook/fetch-political-news-in-multiple-languages.md](https://apitube.io/cookbook/fetch-political-news-in-multiple-languages.md)
+- [https://apitube.io/cookbook/filter-articles-mentioning-disasters.md](https://apitube.io/cookbook/filter-articles-mentioning-disasters.md)
+- [https://apitube.io/cookbook/filter-articles-mentioning-diseases.md](https://apitube.io/cookbook/filter-articles-mentioning-diseases.md)
+- [https://apitube.io/cookbook/filter-articles-mentioning-events.md](https://apitube.io/cookbook/filter-articles-mentioning-events.md)
+- [https://apitube.io/cookbook/filter-articles-mentioning-persons.md](https://apitube.io/cookbook/filter-articles-mentioning-persons.md)
+- [https://apitube.io/cookbook/filter-news-by-language.md](https://apitube.io/cookbook/filter-news-by-language.md)
+- [https://apitube.io/cookbook/find-articles-with-mixed-sentiment.md](https://apitube.io/cookbook/find-articles-with-mixed-sentiment.md)
+- [https://apitube.io/cookbook/gaming-news-from-specific-sources.md](https://apitube.io/cookbook/gaming-news-from-specific-sources.md)
+- [https://apitube.io/cookbook/geopolitical-event-analysis-with-location-filtering.md](https://apitube.io/cookbook/geopolitical-event-analysis-with-location-filtering.md)
+- [https://apitube.io/cookbook/german-news-about-automotive.md](https://apitube.io/cookbook/german-news-about-automotive.md)
+- [https://apitube.io/cookbook/get-articles-from-premium-sources.md](https://apitube.io/cookbook/get-articles-from-premium-sources.md)
+- [https://apitube.io/cookbook/get-articles-with-both-images-and-videos.md](https://apitube.io/cookbook/get-articles-with-both-images-and-videos.md)
+- [https://apitube.io/cookbook/get-articles-with-consistent-image-sizes.md](https://apitube.io/cookbook/get-articles-with-consistent-image-sizes.md)
+- [https://apitube.io/cookbook/get-articles-with-faceting-for-analytics.md](https://apitube.io/cookbook/get-articles-with-faceting-for-analytics.md)
+- [https://apitube.io/cookbook/get-articles-with-high-quality-images.md](https://apitube.io/cookbook/get-articles-with-high-quality-images.md)
+- [https://apitube.io/cookbook/get-articles-with-landscape-oriented-images.md](https://apitube.io/cookbook/get-articles-with-landscape-oriented-images.md)
+- [https://apitube.io/cookbook/get-articles-with-mobile-optimized-images.md](https://apitube.io/cookbook/get-articles-with-mobile-optimized-images.md)
+- [https://apitube.io/cookbook/get-articles-with-range-faceting-for-timelines.md](https://apitube.io/cookbook/get-articles-with-range-faceting-for-timelines.md)
+- [https://apitube.io/cookbook/get-articles-with-specific-title.md](https://apitube.io/cookbook/get-articles-with-specific-title.md)
+- [https://apitube.io/cookbook/get-instagram-ready-content.md](https://apitube.io/cookbook/get-instagram-ready-content.md)
+- [https://apitube.io/cookbook/get-latest-bitcoin-headlines-excluding-bbc.md](https://apitube.io/cookbook/get-latest-bitcoin-headlines-excluding-bbc.md)
+- [https://apitube.io/cookbook/get-latest-business-news-uk.md](https://apitube.io/cookbook/get-latest-business-news-uk.md)
+- [https://apitube.io/cookbook/get-latest-crypto-news-sorted-by-number-of-images.md](https://apitube.io/cookbook/get-latest-crypto-news-sorted-by-number-of-images.md)
+- [https://apitube.io/cookbook/get-latest-cryptocurrency-news.md](https://apitube.io/cookbook/get-latest-cryptocurrency-news.md)
+- [https://apitube.io/cookbook/get-latest-headlines-from-us-uk-and-jp-in-english.md](https://apitube.io/cookbook/get-latest-headlines-from-us-uk-and-jp-in-english.md)
+- [https://apitube.io/cookbook/get-latest-health-news.md](https://apitube.io/cookbook/get-latest-health-news.md)
+- [https://apitube.io/cookbook/get-latest-news-about-deepseek-ai.md](https://apitube.io/cookbook/get-latest-news-about-deepseek-ai.md)
+- [https://apitube.io/cookbook/get-latest-news-about-real-estate-from-cnbc-and-fox-business.md](https://apitube.io/cookbook/get-latest-news-about-real-estate-from-cnbc-and-fox-business.md)
+- [https://apitube.io/cookbook/get-latest-news-about-trump-meme-coin.md](https://apitube.io/cookbook/get-latest-news-about-trump-meme-coin.md)
+- [https://apitube.io/cookbook/get-latest-news-articles-about-crypto.md](https://apitube.io/cookbook/get-latest-news-articles-about-crypto.md)
+- [https://apitube.io/cookbook/get-latest-news-articles-from-chile.md](https://apitube.io/cookbook/get-latest-news-articles-from-chile.md)
+- [https://apitube.io/cookbook/get-latest-news-articles-from-countries.md](https://apitube.io/cookbook/get-latest-news-articles-from-countries.md)
+- [https://apitube.io/cookbook/get-latest-news-articles-from-france.md](https://apitube.io/cookbook/get-latest-news-articles-from-france.md)
+- [https://apitube.io/cookbook/get-latest-news-articles-from-germany.md](https://apitube.io/cookbook/get-latest-news-articles-from-germany.md)
+- [https://apitube.io/cookbook/get-latest-news-articles-from-spain.md](https://apitube.io/cookbook/get-latest-news-articles-from-spain.md)
+- [https://apitube.io/cookbook/get-latest-news-articles-in-a-specific-time-range.md](https://apitube.io/cookbook/get-latest-news-articles-in-a-specific-time-range.md)
+- [https://apitube.io/cookbook/get-latest-news-articles-with-positive-sentiment.md](https://apitube.io/cookbook/get-latest-news-articles-with-positive-sentiment.md)
+- [https://apitube.io/cookbook/get-latest-news-from-cnn-bbc-and-fox-news-with-videos.md](https://apitube.io/cookbook/get-latest-news-from-cnn-bbc-and-fox-news-with-videos.md)
+- [https://apitube.io/cookbook/get-latest-news-from-cnn-in-politics-technology-and-business-with-positive-or-neutral-sentiment.md](https://apitube.io/cookbook/get-latest-news-from-cnn-in-politics-technology-and-business-with-positive-or-neutral-sentiment.md)
+- [https://apitube.io/cookbook/get-latest-news-from-us-uk-and-japan-in-new-york-london-and-tokyo-and-export-as-.md](https://apitube.io/cookbook/get-latest-news-from-us-uk-and-japan-in-new-york-london-and-tokyo-and-export-as-.md)
+- [https://apitube.io/cookbook/get-latest-news-from-wired-and-export-as-xml.md](https://apitube.io/cookbook/get-latest-news-from-wired-and-export-as-xml.md)
+- [https://apitube.io/cookbook/get-latest-news-in-french-from-politics-and-business-categories.md](https://apitube.io/cookbook/get-latest-news-in-french-from-politics-and-business-categories.md)
+- [https://apitube.io/cookbook/get-latest-news-in-spanish-excluding-us-and-uk.md](https://apitube.io/cookbook/get-latest-news-in-spanish-excluding-us-and-uk.md)
+- [https://apitube.io/cookbook/get-latest-news-mentioning-john-doe-and-sorted-by-sentiment-score.md](https://apitube.io/cookbook/get-latest-news-mentioning-john-doe-and-sorted-by-sentiment-score.md)
+- [https://apitube.io/cookbook/get-latest-tech-news-from-the-last-30-days.md](https://apitube.io/cookbook/get-latest-tech-news-from-the-last-30-days.md)
+- [https://apitube.io/cookbook/get-latest-tech-news-from-tokyo.md](https://apitube.io/cookbook/get-latest-tech-news-from-tokyo.md)
+- [https://apitube.io/cookbook/get-latest-technology-news.md](https://apitube.io/cookbook/get-latest-technology-news.md)
+- [https://apitube.io/cookbook/get-long-read-articles.md](https://apitube.io/cookbook/get-long-read-articles.md)
+- [https://apitube.io/cookbook/get-news-articles-about-ai-or-innovation-excluding-celebrity-news.md](https://apitube.io/cookbook/get-news-articles-about-ai-or-innovation-excluding-celebrity-news.md)
+- [https://apitube.io/cookbook/get-news-articles-covering-topics.md](https://apitube.io/cookbook/get-news-articles-covering-topics.md)
+- [https://apitube.io/cookbook/get-news-articles-in-multiple-languages.md](https://apitube.io/cookbook/get-news-articles-in-multiple-languages.md)
+- [https://apitube.io/cookbook/get-news-articles-in-the-technology-or-science-category-in-french.md](https://apitube.io/cookbook/get-news-articles-in-the-technology-or-science-category-in-french.md)
+- [https://apitube.io/cookbook/get-news-articles-with-media-volume.md](https://apitube.io/cookbook/get-news-articles-with-media-volume.md)
+- [https://apitube.io/cookbook/get-news-between-dates.md](https://apitube.io/cookbook/get-news-between-dates.md)
+- [https://apitube.io/cookbook/get-news-by-author.md](https://apitube.io/cookbook/get-news-by-author.md)
+- [https://apitube.io/cookbook/get-news-by-image-count.md](https://apitube.io/cookbook/get-news-by-image-count.md)
+- [https://apitube.io/cookbook/get-news-by-title-with-exclusion.md](https://apitube.io/cookbook/get-news-by-title-with-exclusion.md)
+- [https://apitube.io/cookbook/get-news-from-specific-publications-about-technology.md](https://apitube.io/cookbook/get-news-from-specific-publications-about-technology.md)
+- [https://apitube.io/cookbook/get-news-in-categories.md](https://apitube.io/cookbook/get-news-in-categories.md)
+- [https://apitube.io/cookbook/get-news-on-date.md](https://apitube.io/cookbook/get-news-on-date.md)
+- [https://apitube.io/cookbook/get-news-with-large-media.md](https://apitube.io/cookbook/get-news-with-large-media.md)
+- [https://apitube.io/cookbook/get-news-with-small-images.md](https://apitube.io/cookbook/get-news-with-small-images.md)
+- [https://apitube.io/cookbook/get-non-duplicate-news.md](https://apitube.io/cookbook/get-non-duplicate-news.md)
+- [https://apitube.io/cookbook/get-positive-sentiment-news-articles-in-english-from-japan.md](https://apitube.io/cookbook/get-positive-sentiment-news-articles-in-english-from-japan.md)
+- [https://apitube.io/cookbook/get-positive-sentiment-news.md](https://apitube.io/cookbook/get-positive-sentiment-news.md)
+- [https://apitube.io/cookbook/get-recent-articles-from-top-tech-blogs.md](https://apitube.io/cookbook/get-recent-articles-from-top-tech-blogs.md)
+- [https://apitube.io/cookbook/get-sorted-news.md](https://apitube.io/cookbook/get-sorted-news.md)
+- [https://apitube.io/cookbook/get-technology-news-articles-in-japanese-excluding-new-york.md](https://apitube.io/cookbook/get-technology-news-articles-in-japanese-excluding-new-york.md)
+- [https://apitube.io/cookbook/get-top-headlines-from-united-states.md](https://apitube.io/cookbook/get-top-headlines-from-united-states.md)
+- [https://apitube.io/cookbook/high-quality-visual-news-aggregation-with-sentiment.md](https://apitube.io/cookbook/high-quality-visual-news-aggregation-with-sentiment.md)
+- [https://apitube.io/cookbook/in-depth-analysis-articles-with-quality-sorting.md](https://apitube.io/cookbook/in-depth-analysis-articles-with-quality-sorting.md)
+- [https://apitube.io/cookbook/most-mentioned-entities-with-faceting.md](https://apitube.io/cookbook/most-mentioned-entities-with-faceting.md)
+- [https://apitube.io/cookbook/multi-dimensional-sentiment-analysis-with-source-filtering.md](https://apitube.io/cookbook/multi-dimensional-sentiment-analysis-with-source-filtering.md)
+- [https://apitube.io/cookbook/multi-language-news-monitoring-with-sentiment-tracking.md](https://apitube.io/cookbook/multi-language-news-monitoring-with-sentiment-tracking.md)
+- [https://apitube.io/cookbook/multi-topic-sentiment-analysis-with-language-filtering.md](https://apitube.io/cookbook/multi-topic-sentiment-analysis-with-language-filtering.md)
+- [https://apitube.io/cookbook/news-articles-with-timing.md](https://apitube.io/cookbook/news-articles-with-timing.md)
+- [https://apitube.io/cookbook/positive-articles-about-elon-musk.md](https://apitube.io/cookbook/positive-articles-about-elon-musk.md)
+- [https://apitube.io/cookbook/product-review-sentiment-analysis-with-brand-filtering.md](https://apitube.io/cookbook/product-review-sentiment-analysis-with-brand-filtering.md)
+- [https://apitube.io/cookbook/recent-articles-climate-change.md](https://apitube.io/cookbook/recent-articles-climate-change.md)
+- [https://apitube.io/cookbook/recent-articles-from-nyt.md](https://apitube.io/cookbook/recent-articles-from-nyt.md)
+- [https://apitube.io/cookbook/retrieve-environmental-news-from-key-locations.md](https://apitube.io/cookbook/retrieve-environmental-news-from-key-locations.md)
+- [https://apitube.io/cookbook/search-for-exact-phrases-in-article-titles.md](https://apitube.io/cookbook/search-for-exact-phrases-in-article-titles.md)
+- [https://apitube.io/cookbook/search-for-words-near-each-other-in-titles.md](https://apitube.io/cookbook/search-for-words-near-each-other-in-titles.md)
+- [https://apitube.io/cookbook/search-results-with-highlighting-and-field-selection.md](https://apitube.io/cookbook/search-results-with-highlighting-and-field-selection.md)
+- [https://apitube.io/cookbook/select-specific-fields-to-reduce-payload-size.md](https://apitube.io/cookbook/select-specific-fields-to-reduce-payload-size.md)
+- [https://apitube.io/cookbook/sort-articles-by-controversy-score.md](https://apitube.io/cookbook/sort-articles-by-controversy-score.md)
+- [https://apitube.io/cookbook/sort-articles-by-engagement-score.md](https://apitube.io/cookbook/sort-articles-by-engagement-score.md)
+- [https://apitube.io/cookbook/sort-articles-by-quality-score.md](https://apitube.io/cookbook/sort-articles-by-quality-score.md)
+- [https://apitube.io/cookbook/sort-articles-by-trust-score.md](https://apitube.io/cookbook/sort-articles-by-trust-score.md)
+- [https://apitube.io/cookbook/trending-technology-headlines-from-top-tech-sources.md](https://apitube.io/cookbook/trending-technology-headlines-from-top-tech-sources.md)
+- [https://apitube.io/free-news-api.md](https://apitube.io/free-news-api.md)
+- [https://apitube.io/google-news-api.md](https://apitube.io/google-news-api.md)
+- [https://apitube.io/home.md](https://apitube.io/home.md)
+- [https://apitube.io/premium-datasets.md](https://apitube.io/premium-datasets.md)
+- [https://apitube.io/pricing.md](https://apitube.io/pricing.md)
+- [https://apitube.io/product/how-it-works.md](https://apitube.io/product/how-it-works.md)
+- [https://apitube.io/product/news-api.md](https://apitube.io/product/news-api.md)
+- [https://apitube.io/product/structured-news-data.md](https://apitube.io/product/structured-news-data.md)
+- [https://apitube.io/product/use-cases.md](https://apitube.io/product/use-cases.md)
+- [https://apitube.io/solutions/aerospace-news-api.md](https://apitube.io/solutions/aerospace-news-api.md)
+- [https://apitube.io/solutions/agriculture-news-api.md](https://apitube.io/solutions/agriculture-news-api.md)
+- [https://apitube.io/solutions/ai-news-api.md](https://apitube.io/solutions/ai-news-api.md)
+- [https://apitube.io/solutions/analysis-of-public-opinion-sentiments.md](https://apitube.io/solutions/analysis-of-public-opinion-sentiments.md)
+- [https://apitube.io/solutions/analysis-of-public-opinion.md](https://apitube.io/solutions/analysis-of-public-opinion.md)
+- [https://apitube.io/solutions/analysis-of-the-impact-of-political-events-on-business.md](https://apitube.io/solutions/analysis-of-the-impact-of-political-events-on-business.md)
+- [https://apitube.io/solutions/analyzing-the-impact-of-cultural-events-and-trends.md](https://apitube.io/solutions/analyzing-the-impact-of-cultural-events-and-trends.md)
+- [https://apitube.io/solutions/automotive-news-api.md](https://apitube.io/solutions/automotive-news-api.md)
+- [https://apitube.io/solutions/brand-monitoring.md](https://apitube.io/solutions/brand-monitoring.md)
+- [https://apitube.io/solutions/crypto-news-api.md](https://apitube.io/solutions/crypto-news-api.md)
+- [https://apitube.io/solutions/data-mining.md](https://apitube.io/solutions/data-mining.md)
+- [https://apitube.io/solutions/determining-the-sentiments-of-texts.md](https://apitube.io/solutions/determining-the-sentiments-of-texts.md)
+- [https://apitube.io/solutions/determining-trends-in-consumer-behavior.md](https://apitube.io/solutions/determining-trends-in-consumer-behavior.md)
+- [https://apitube.io/solutions/emergency-monitoring.md](https://apitube.io/solutions/emergency-monitoring.md)
+- [https://apitube.io/solutions/energy-news-api.md](https://apitube.io/solutions/energy-news-api.md)
+- [https://apitube.io/solutions/evaluation-of-marketing-campaigns-effectiveness.md](https://apitube.io/solutions/evaluation-of-marketing-campaigns-effectiveness.md)
+- [https://apitube.io/solutions/evaluation-of-the-impact-of-cultural-events.md](https://apitube.io/solutions/evaluation-of-the-impact-of-cultural-events.md)
+- [https://apitube.io/solutions/export-news-articles.md](https://apitube.io/solutions/export-news-articles.md)
+- [https://apitube.io/solutions/export-to-json.md](https://apitube.io/solutions/export-to-json.md)
+- [https://apitube.io/solutions/financial-analysis.md](https://apitube.io/solutions/financial-analysis.md)
+- [https://apitube.io/solutions/financial-news-api.md](https://apitube.io/solutions/financial-news-api.md)
+- [https://apitube.io/solutions/forecasting-social-trends.md](https://apitube.io/solutions/forecasting-social-trends.md)
+- [https://apitube.io/solutions/market-intelligence.md](https://apitube.io/solutions/market-intelligence.md)
+- [https://apitube.io/solutions/media-monitoring.md](https://apitube.io/solutions/media-monitoring.md)
+- [https://apitube.io/solutions/metallurgy-news-api.md](https://apitube.io/solutions/metallurgy-news-api.md)
+- [https://apitube.io/solutions/military-news-api.md](https://apitube.io/solutions/military-news-api.md)
+- [https://apitube.io/solutions/monitoring-of-health-trends.md](https://apitube.io/solutions/monitoring-of-health-trends.md)
+- [https://apitube.io/solutions/monitoring-of-healthcare-and-medical-news.md](https://apitube.io/solutions/monitoring-of-healthcare-and-medical-news.md)
+- [https://apitube.io/solutions/monitoring-of-risks-for-corporate-decisions.md](https://apitube.io/solutions/monitoring-of-risks-for-corporate-decisions.md)
+- [https://apitube.io/solutions/monitoring-of-technological-trends.md](https://apitube.io/solutions/monitoring-of-technological-trends.md)
+- [https://apitube.io/solutions/movies-news-api.md](https://apitube.io/solutions/movies-news-api.md)
+- [https://apitube.io/solutions/news-articles-history.md](https://apitube.io/solutions/news-articles-history.md)
+- [https://apitube.io/solutions/petrochemicals-news-api.md](https://apitube.io/solutions/petrochemicals-news-api.md)
+- [https://apitube.io/solutions/pharmacy-news-api.md](https://apitube.io/solutions/pharmacy-news-api.md)
+- [https://apitube.io/solutions/prevention-of-manipulations-and-fake-news.md](https://apitube.io/solutions/prevention-of-manipulations-and-fake-news.md)
+- [https://apitube.io/solutions/real-estate-news-api.md](https://apitube.io/solutions/real-estate-news-api.md)
+- [https://apitube.io/solutions/retail-news-api.md](https://apitube.io/solutions/retail-news-api.md)
+- [https://apitube.io/solutions/risk-intelligence.md](https://apitube.io/solutions/risk-intelligence.md)
+- [https://apitube.io/solutions/technology-news-api.md](https://apitube.io/solutions/technology-news-api.md)
+- [https://apitube.io/solutions/telecommunications-news-api.md](https://apitube.io/solutions/telecommunications-news-api.md)
+- [https://apitube.io/solutions/video-games-news-api.md](https://apitube.io/solutions/video-games-news-api.md)
+- [https://apitube.io/stock-market-news-api.md](https://apitube.io/stock-market-news-api.md)
+
+## Optional
+
+- [Terms of Service](https://apitube.io/terms/terms-of-service): Legal terms and conditions
+- [Privacy Policy](https://apitube.io/terms/privacy-policy): Privacy and data protection policy
+- [Contact](https://apitube.io/contact): Get in touch with our team
+- [Careers](https://apitube.io/careers): Join the APITube team
+- [Compare with NewsData.io](https://apitube.io/compare-apitube-news-api-vs-newsdata-io): Feature comparison

@@ -1,0 +1,86 @@
+aid: apitube
+name: APITube
+description: >-
+  APITube is a news data API providing search and retrieval across news articles, top headlines,
+  trends, companies, journalists, and fact-checks, with taxonomy resolution for entities, topics
+  and locations. The public contract is an OpenAPI 3.1 document of 26 operations served from
+  api.apitube.io, authenticated with an API key by header or query parameter. APITube also
+  operates a first-party MCP server at mcp.apitube.io over streamable HTTP, whose tool list is
+  readable anonymously, and publishes an RFC 9727 api-catalog linkset at the apex that names the
+  specification, the documentation, the llms.txt and the MCP server card.
+type: Index
+url: https://raw.githubusercontent.com/api-evangelist/apitube/refs/heads/main/apis.yml
+created: '2026-08-21'
+modified: '2026-08-21'
+specificationVersion: '0.23'
+tags:
+- News
+- Media
+- Data
+- Search
+- Fact Checking
+- Entities
+- MCP
+- Agents
+tags_raw:
+- news
+- media monitoring
+- news api
+- fact check
+- journalists
+apis:
+- aid: apitube:apitube-news-api
+  name: APITube News API
+  description: >-
+    News search and retrieval — everything, top headlines, trends, companies, journalists,
+    fact-checks and taxonomy suggestion. 26 operations, API key by header or query.
+  humanURL: https://docs.apitube.io
+  baseURL: https://api.apitube.io
+  tags:
+  - News
+  - Search
+  - Data
+  properties:
+  - type: OpenAPI
+    url: openapi/apitube-news-api-openapi.yml
+  - type: Documentation
+    url: https://docs.apitube.io
+  - type: APIReference
+    url: https://api.apitube.io/openapi.json
+  - type: MCPServer
+    url: mcp/apitube-mcp-server-card.json
+  - type: Authentication
+    url: https://docs.apitube.io
+common:
+- type: APICatalog
+  url: well-known/apitube-api-catalog.json
+- type: LLMsTxt
+  url: llms/apitube-llms.txt
+- type: MCPServer
+  url: mcp/apitube-mcp-server-card.json
+- type: Website
+  url: https://apitube.io
+- type: DeveloperPortal
+  url: https://docs.apitube.io
+maintainers:
+- FN: APITube
+  url: https://apitube.io
+x-provenance:
+  added: '2026-08-21'
+  method: searched
+  source: https://apitube.io/.well-known/api-catalog
+  note: >-
+    Submitted via apis.io/add on 2026-08-20 from apitubehq@gmail.com. THE SUBMITTED APIs.json URL
+    IS WRONG: https://apitube.io/apis.json returns 404, and so does a control path, so the 404 is
+    real rather than a catch-all. That is a bad pointer in the submission, NOT an absent surface —
+    APITube publishes plenty. Everything here was discovered from the RFC 9727 api-catalog at the
+    apex instead, which is the authoritative discovery document.
+    TWO OPENAPI DOCUMENTS EXIST AND THEY DISAGREE. https://api.apitube.io/openapi.json is
+    OpenAPI 3.1.0 with 26 paths and no component schemas; https://apitube.io/openapi.json is
+    OpenAPI 3.0.3 with 5 paths and 13 schemas. Both were fetched and both are kept under
+    openapi/_original/. The api-catalog names the api.apitube.io copy as `service-desc`, so that
+    one is treated as canonical and is the working document. The apex copy is retained as
+    evidence of the discrepancy; it is the provider's to reconcile.
+    The MCP server at https://mcp.apitube.io/ was probed live and answered tools/list anonymously
+    with two tools, search_news and suggest. The REST API was probed at
+    api.apitube.io/v1/news/everything and returned 401 JSON, which is correct gating.

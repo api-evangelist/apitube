@@ -1,0 +1,16 @@
+{
+  "serverInfo": {
+    "name": "APITube News MCP-Server",
+    "version": "1.0.0"
+  },
+  "title": "APITube News",
+  "description": "Search and filter global news articles by language, category, sentiment, entities, media and more.",
+  "websiteUrl": "https://apitube.io",
+  "documentationUrl": "https://docs.apitube.io/platform/news-api/ai/mcp-server",
+  "protocolVersion": "2024-11-05",
+  "transport": {
+    "type": "streamable-http",
+    "endpoint": "https://mcp.apitube.io/"
+  },
+  "capabilities": ["tools", "prompts"]
+}

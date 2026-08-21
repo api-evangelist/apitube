@@ -1,0 +1,35 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://apitube.io/",
+      "service-desc": [
+        {
+          "href": "https://api.apitube.io/openapi.json",
+          "type": "application/json",
+          "title": "APITube News API — OpenAPI 3 specification"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.apitube.io",
+          "type": "text/html",
+          "title": "APITube News API documentation"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "https://apitube.io/llms.txt",
+          "type": "text/plain",
+          "title": "LLM-friendly site & API overview"
+        }
+      ],
+      "related": [
+        {
+          "href": "https://apitube.io/.well-known/mcp/server-card.json",
+          "type": "application/json",
+          "title": "APITube News MCP-Server card"
+        }
+      ]
+    }
+  ]
+}
