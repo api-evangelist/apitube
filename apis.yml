@@ -32,8 +32,8 @@ apis:
 - aid: apitube:apitube-news-api
   name: APITube News API
   description: >-
-    News search and retrieval — everything, top headlines, trends, companies, journalists,
-    fact-checks and taxonomy suggestion. 26 operations, API key by header or query.
+    News search and retrieval — everything, top headlines, trends, companies, journalists, fact-checks
+    and taxonomy suggestion. 26 operations, API key by header or query.
   humanURL: https://docs.apitube.io
   baseURL: https://api.apitube.io
   tags:
@@ -51,6 +51,58 @@ apis:
     url: mcp/apitube-mcp-server-card.json
   - type: Authentication
     url: https://docs.apitube.io
+- aid: apitube:apitube-account-api
+  name: APITube Account API
+  description: API key balance and subscription plan information.
+  humanURL: https://docs.apitube.io
+  baseURL: https://api.apitube.io
+  tags:
+  - Account
+  properties:
+  - type: OpenAPI
+    url: openapi/apitube-account-api-openapi.yml
+- aid: apitube:apitube-fact-check-api
+  name: APITube Fact Check API
+  description: >-
+    Verify factual claims against the live news corpus (retrieval-augmented). Returns per-claim verdicts
+    on an 8-level scale with confidence, explanation, and supporting evidence.
+  humanURL: https://docs.apitube.io
+  baseURL: https://api.apitube.io
+  tags:
+  - Fact Check
+  properties:
+  - type: OpenAPI
+    url: openapi/apitube-fact-check-api-openapi.yml
+- aid: apitube:apitube-reference-api
+  name: APITube Reference API
+  description: The Reference API from APITube — 7 operation(s) for reference.
+  humanURL: https://docs.apitube.io
+  baseURL: https://api.apitube.io
+  tags:
+  - Reference
+  properties:
+  - type: OpenAPI
+    url: openapi/apitube-reference-api-openapi.yml
+- aid: apitube:apitube-suggest-api
+  name: APITube Suggest API
+  description: Autocomplete and typeahead suggestions for entities.
+  humanURL: https://docs.apitube.io
+  baseURL: https://api.apitube.io
+  tags:
+  - Suggest
+  properties:
+  - type: OpenAPI
+    url: openapi/apitube-suggest-api-openapi.yml
+- aid: apitube:apitube-system-api
+  name: APITube System API
+  description: Health checks and service status.
+  humanURL: https://docs.apitube.io
+  baseURL: https://api.apitube.io
+  tags:
+  - System
+  properties:
+  - type: OpenAPI
+    url: openapi/apitube-system-api-openapi.yml
 common:
 - type: APICatalog
   url: well-known/apitube-api-catalog.json
