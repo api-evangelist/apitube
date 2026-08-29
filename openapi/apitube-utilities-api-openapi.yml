@@ -1,0 +1,143 @@
+openapi: 3.2.0
+info:
+  title: APITube News Utilities API
+  description: Real-time news API providing access to articles from 500,000+ verified sources worldwide in 60+ languages. Supports full-text search, sentiment analysis, entity recognition, and advanced filtering.
+  version: 1.0.0
+  contact:
+    name: APITube Support
+    url: https://apitube.io/contact
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  x-logo:
+    url: https://apitube.io/images/logo.svg
+servers:
+- url: https://api.apitube.io
+  description: Production API server
+security:
+- ApiKeyHeader: []
+- ApiKeyQuery: []
+tags:
+- name: Utilities
+  description: Helper endpoints for building queries
+paths:
+  /v1/suggest/entities:
+    get:
+      summary: Autocomplete entity search
+      description: Search for entity IDs (people, organizations, brands, locations) by name. Use to resolve entity names to IDs before filtering news results.
+      operationId: suggestEntities
+      tags:
+      - Utilities
+      parameters:
+      - name: api_key
+        in: query
+        description: Your API key (alternative to X-API-Key header)
+        required: false
+        schema:
+          type: string
+      - name: q
+        in: query
+        description: Search query string for entity name autocomplete.
+        required: true
+        schema:
+          type: string
+        example: Apple
+      - name: type
+        in: query
+        description: Filter suggestions by entity type.
+        required: false
+        schema:
+          type: string
+          enum:
+          - human
+          - organization
+          - brand
+          - location
+      responses:
+        '200':
+          description: List of matching entities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntitySuggestResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    EntitySuggestResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                - human
+                - organization
+                - brand
+                - location
+    ErrorResponse:
+      type: object
+      required:
+      - status
+      - code
+      - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Machine-readable error identifier
+        message:
+          type: string
+          description: Human-readable error description
+        links:
+          type: object
+          properties:
+            about:
+              type: string
+              description: Documentation URL for this error
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            code: unauthorized
+            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed as a request header
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter
+externalDocs:
+  description: Full APITube documentation
+  url: https://docs.apitube.io

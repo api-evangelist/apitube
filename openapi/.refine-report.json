@@ -1,0 +1,35 @@
+{
+  "provider": "apitube",
+  "sources": [
+    "_original/apitube-apex-openapi.json",
+    "_original/apitube-api-openapi.json"
+  ],
+  "outputs": [
+    "apitube-account-api-openapi.yml",
+    "apitube-news-api-openapi.yml",
+    "apitube-utilities-api-openapi.yml",
+    "apitube-fact-check-api-openapi.yml",
+    "apitube-reference-api-openapi.yml",
+    "apitube-suggest-api-openapi.yml",
+    "apitube-system-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "apitube-apex-openapi.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apitube-api-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apitube-api-openapi.json: declared missing tag: Reference",
+    "tag 'Account' spans 2 source specs (apitube-apex-openapi.json, apitube-api-openapi.json): per-path servers applied",
+    "tag 'News' spans 2 source specs (apitube-apex-openapi.json, apitube-api-openapi.json): per-path servers applied"
+  ],
+  "skipped": [
+    "apitube-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "apitube-fact-check-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "apitube-news-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "apitube-reference-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "apitube-suggest-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "apitube-system-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

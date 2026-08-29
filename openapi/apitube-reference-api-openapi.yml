@@ -1,0 +1,2977 @@
+openapi: 3.2.0
+info:
+  title: APITube News Reference API
+  version: 1.0.0
+  summary: Search and filter news articles from thousands of sources worldwide.
+  description: 'APITube News API provides programmatic access to a comprehensive, real-time news database aggregated from thousands of sources worldwide. Use it to search, filter, and retrieve news articles with advanced query capabilities.
+
+
+    ## Key Endpoints
+
+
+    - **Everything** (`/v1/news/everything`) — full-text search across all indexed articles with filters by title, date range, language, country, source, sentiment, category, topic, industry, and named entities (people, organizations, locations, brands, etc.).
+
+    - **Top Headlines** (`/v1/news/top-headlines`) — breaking and trending news from high-authority sources ranked by OPR score.
+
+    - **Story** (`/v1/news/story/{articleId}`) — retrieve related articles for a given story.
+
+    - **Article** (`/v1/news/article`) — fetch one or more articles by ID.
+
+    - **Dictionaries** — list available categories, topics, industries, and entities.
+
+    - **Trends** — discover trending topics and entities over time.
+
+    - **Stream** (`/v1/news/stream`) — real-time Server-Sent Events (SSE) stream of new articles.
+
+    - **Webhooks** — subscribe to push notifications for new articles matching your filters.
+
+
+    ## Export Formats
+
+
+    JSON (default), CSV, TSV, XML, RSS, XLSX, Parquet, JSONL, and NDJSON.
+
+
+    ## Authentication
+
+
+    All requests require an API key passed via the `X-API-Key` header or the `api_key` query parameter.'
+  contact:
+    name: APITube Support
+    url: https://apitube.io
+    email: support@apitube.io
+  termsOfService: https://apitube.io/terms/terms-of-service
+servers:
+- url: https://api.apitube.io
+security:
+- ApiKeyHeader: []
+- ApiKeyQuery: []
+tags:
+- name: Reference
+paths:
+  /v1/news/event-types:
+    get:
+      summary: List valid event types
+      tags:
+      - Reference
+      description: Returns every valid value for the `event.type` and `event.category` filters. Use `event_types[].code` in the `event.type` / `ignore.event.type` filters and `categories[]` in the `event.category` filter.
+      responses:
+        '200':
+          description: Valid event types and the categories they belong to
+          content:
+            application/json:
+              schema:
+                description: Valid event types and the categories they belong to
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: ok
+                  categories:
+                    type: array
+                    items:
+                      type: string
+                    description: Valid values for the event.category filter
+                  event_types:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Valid value for the event.type filter
+                        category:
+                          type: string
+                          description: Category this event type belongs to
+              example:
+                status: ok
+                categories:
+                - business
+                - society
+                - environment
+                event_types:
+                - code: ipo
+                  category: business
+                - code: layoffs
+                  category: business
+                - code: election
+                  category: society
+                - code: earthquake
+                  category: environment
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/people:
+    get:
+      summary: List & search people
+      tags:
+      - Reference
+      description: Directory of known persons (public figures, politicians, executives) with Wikidata-enriched profiles. Filter by name or Wikidata ID. Pivot to coverage via the `links.articles` URL.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: name
+        required: false
+        description: Filter by person name (substring match).
+      - schema:
+          type: string
+        in: query
+        name: wikidata_id
+        required: false
+        description: Filter by Wikidata ID (e.g. Q317521 or 317521).
+      - schema:
+          type: integer
+        in: query
+        name: page
+        required: false
+        description: Page number (default 1).
+      - schema:
+          type: integer
+        in: query
+        name: per_page
+        required: false
+        description: Results per page (default 100, max 250; the Free plan is capped at 10 and Starter at 50).
+      responses:
+        '200':
+          description: Paginated list of people
+          content:
+            application/json:
+              schema:
+                description: Paginated list of people
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - ok
+                  limit:
+                    type: integer
+                    description: Results per page
+                  page:
+                    type: integer
+                    description: Current page number
+                  has_next_pages:
+                    type: boolean
+                    description: Whether more pages are available
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Person (entity) ID
+                        name:
+                          type: string
+                          description: Person name
+                        type:
+                          type: string
+                          description: Entity type (person)
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: string
+                              description: Link to this reference profile
+                            articles:
+                              type: string
+                              description: Link to articles mentioning this entity
+                            wikipedia:
+                              type: string
+                              description: Wikipedia URL (empty if unknown)
+                            wikidata:
+                              type: string
+                              description: Wikidata URL (empty if unknown)
+                        profile:
+                          type:
+                          - object
+                          - 'null'
+                          description: Wikidata-enriched metadata (varies by entity)
+                          additionalProperties: true
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/people/{id}:
+    get:
+      summary: Get a person profile
+      tags:
+      - Reference
+      description: Returns a single person profile with Wikidata-enriched metadata and links to coverage.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: coverage
+        required: false
+        description: Set to "false" to skip the coverage block (article counts, timeline, top sources/topics).
+      - schema:
+          type: integer
+        in: path
+        name: id
+        required: true
+        description: Person (entity) ID.
+      responses:
+        '200':
+          description: A single person profile
+          content:
+            application/json:
+              schema:
+                description: A single person profile
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Person (entity) ID
+                  name:
+                    type: string
+                    description: Person name
+                  type:
+                    type: string
+                    description: Entity type (person)
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        description: Link to this reference profile
+                      articles:
+                        type: string
+                        description: Link to articles mentioning this entity
+                      wikipedia:
+                        type: string
+                        description: Wikipedia URL (empty if unknown)
+                      wikidata:
+                        type: string
+                        description: Wikidata URL (empty if unknown)
+                  profile:
+                    type:
+                    - object
+                    - 'null'
+                    description: Wikidata-enriched metadata (varies by entity)
+                    additionalProperties: true
+                  coverage:
+                    type:
+                    - object
+                    - 'null'
+                    description: Aggregated coverage stats (omitted when coverage=false, null on error)
+                    properties:
+                      article_count:
+                        type: integer
+                        description: Total articles in coverage scope
+                      first_seen:
+                        type:
+                        - string
+                        - 'null'
+                        description: Date of the earliest article (YYYY-MM-DD)
+                      last_seen:
+                        type:
+                        - string
+                        - 'null'
+                        description: Date of the latest article (YYYY-MM-DD)
+                      sentiment:
+                        type: object
+                        properties:
+                          positive:
+                            type: integer
+                          neutral:
+                            type: integer
+                          negative:
+                            type: integer
+                      momentum:
+                        type: object
+                        properties:
+                          last_30_days:
+                            type: integer
+                          previous_30_days:
+                            type: integer
+                          change_pct:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Percent change vs previous 30 days
+                      timeline:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            period:
+                              type: string
+                              description: Month bucket (YYYY-MM-DD)
+                            count:
+                              type: integer
+                      top_sources:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            domain:
+                              type: string
+                            count:
+                              type: integer
+                      top_topics:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - string
+                              description: Item ID
+                            name:
+                              type: string
+                            count:
+                              type: integer
+                      top_countries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            code:
+                              type: string
+                            count:
+                              type: integer
+                      top_languages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            code:
+                              type: string
+                            count:
+                              type: integer
+                      related_entities:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - string
+                              description: Item ID
+                            name:
+                              type: string
+                            count:
+                              type: integer
+                  recent_articles:
+                    type: array
+                    description: Up to 5 most recent articles (full article objects)
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Unique article ID
+                        href:
+                          type:
+                          - string
+                          - 'null'
+                          description: Original article URL
+                        published_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Publication date in ISO 8601
+                        title:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article title
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article description (plain text)
+                        body:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article body (plain text)
+                        body_html:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article body (HTML)
+                        language:
+                          type: string
+                          description: ISO 639-1 language code
+                        translations:
+                          type: object
+                          description: Machine translations of the article title and description. Always present; fields stay null for English articles and for languages without a translation model
+                          properties:
+                            en:
+                              type: object
+                              properties:
+                                title:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Title translated to English
+                                description:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Description translated to English (plain text)
+                        author:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Author ID
+                            name:
+                              type: string
+                              description: Author name
+                        image:
+                          type: string
+                          description: Main article image URL
+                        categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Category ID
+                              name:
+                                type: string
+                                description: Category name
+                              score:
+                                type: number
+                                description: Relevance score
+                              taxonomy:
+                                type: string
+                                description: Taxonomy identifier
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to category endpoint
+                        topics:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: Topic ID
+                              name:
+                                type: string
+                                description: Topic name
+                              score:
+                                type: number
+                                description: Relevance score
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to topic endpoint
+                        industries:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Industry ID
+                              name:
+                                type: string
+                                description: Industry name
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to industry endpoint
+                        entities:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Entity ID
+                              name:
+                                type: string
+                                description: Entity name
+                              type:
+                                type: string
+                                enum:
+                                - person
+                                - location
+                                - organization
+                                - brand
+                                - product
+                                - natural-disaster
+                                - disease
+                                - event
+                                - sport
+                                - unknown
+                                description: Entity type
+                              frequency:
+                                type: integer
+                                description: Number of mentions in the article
+                              sentiment:
+                                type: object
+                                description: Sentiment toward this entity (aggregated across its mentions)
+                                properties:
+                                  score:
+                                    type: number
+                                    description: Entity sentiment score from -1 (negative) to 1 (positive)
+                                  polarity:
+                                    type: string
+                                    enum:
+                                    - positive
+                                    - negative
+                                    - neutral
+                                    - ''
+                                    description: Entity sentiment polarity
+                                  mentions:
+                                    type: object
+                                    description: Per-mention polarity breakdown
+                                    properties:
+                                      positive:
+                                        type: integer
+                                      neutral:
+                                        type: integer
+                                      negative:
+                                        type: integer
+                              title:
+                                type: object
+                                properties:
+                                  pos:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        start:
+                                          type: integer
+                                          description: Start character offset
+                                        end:
+                                          type: integer
+                                          description: End character offset
+                                    description: Mention positions in title
+                              body:
+                                type: object
+                                properties:
+                                  pos:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        start:
+                                          type: integer
+                                          description: Start character offset
+                                        end:
+                                          type: integer
+                                          description: End character offset
+                                    description: Mention positions in body
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to entity endpoint
+                                  wikipedia:
+                                    type: string
+                                    description: Wikipedia URL
+                                  wikidata:
+                                    type: string
+                                    description: Wikidata URL
+                              metadata:
+                                type: object
+                                description: Additional entity metadata (varies by entity type)
+                                additionalProperties: true
+                        locations_mentioned:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Location name
+                              country:
+                                type: string
+                                description: Country code
+                              lat:
+                                type:
+                                - number
+                                - 'null'
+                                description: Latitude
+                              lng:
+                                type:
+                                - number
+                                - 'null'
+                                description: Longitude
+                              type:
+                                type: string
+                                description: Location type
+                        source:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Source ID
+                            domain:
+                              type: string
+                              description: Source domain
+                            home_page_url:
+                              type: string
+                              description: Source home page URL
+                            type:
+                              type: string
+                              description: Source type
+                            bias:
+                              type: string
+                              description: Media bias (left, center, right)
+                            rankings:
+                              type: object
+                              properties:
+                                opr:
+                                  type: integer
+                                  description: Open PageRank score
+                            location:
+                              type: object
+                              properties:
+                                country_name:
+                                  type: string
+                                  description: Source country name
+                                country_code:
+                                  type: string
+                                  description: Source country ISO code
+                            favicon:
+                              type: string
+                              description: Source favicon URL
+                        sentiment:
+                          type: object
+                          properties:
+                            overall:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                            title:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                            body:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                        summary:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              sentence:
+                                type: string
+                                description: Summary sentence
+                              sentiment:
+                                type: object
+                                properties:
+                                  score:
+                                    type: number
+                                    description: Sentiment score from -1 (negative) to 1 (positive)
+                                  polarity:
+                                    type: string
+                                    enum:
+                                    - positive
+                                    - negative
+                                    - neutral
+                                    - ''
+                                    description: Sentiment polarity
+                        readability:
+                          type: object
+                          properties:
+                            flesch_kincaid_grade:
+                              type: number
+                              description: Flesch-Kincaid grade level
+                            flesch_reading_ease:
+                              type: number
+                              description: Flesch Reading Ease score (0-100)
+                            automated_readability_index:
+                              type: number
+                              description: Automated Readability Index
+                            difficulty_level:
+                              type: string
+                              enum:
+                              - beginner
+                              - intermediate
+                              - advanced
+                              - expert
+                              - unknown
+                              description: Difficulty level
+                            target_audience:
+                              type: string
+                              enum:
+                              - children
+                              - general
+                              - professional
+                              - academic
+                              - unknown
+                              description: Target audience
+                            reading_age:
+                              type: number
+                              description: Estimated reading age
+                            avg_words_per_sentence:
+                              type: number
+                              description: Average words per sentence
+                            avg_syllables_per_word:
+                              type: number
+                              description: Average syllables per word
+                        keywords:
+                          type: array
+                          items:
+                            type: string
+                          description: Article keywords
+                        links:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                description: Link URL
+                              type:
+                                type: string
+                                description: Link type
+                        media:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                description: Media URL
+                              type:
+                                type: string
+                                description: Media type (image, video, etc.)
+                        shares:
+                          type: object
+                          properties:
+                            total:
+                              type: integer
+                              description: Total social shares
+                            facebook:
+                              type: integer
+                              description: Facebook shares
+                            twitter:
+                              type: integer
+                              description: Twitter/X shares
+                            reddit:
+                              type: integer
+                              description: Reddit shares
+                        story:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: Story ID
+                            uri:
+                              type: string
+                              description: Story endpoint URI
+                        is_duplicate:
+                          type: boolean
+                          description: Whether this is a duplicate article
+                        is_free:
+                          type: boolean
+                          description: Whether the article is freely accessible
+                        is_breaking:
+                          type: boolean
+                          description: Whether this is breaking news
+                        read_time:
+                          type: integer
+                          description: Estimated read time in minutes
+                        sentences_count:
+                          type: integer
+                          description: Number of sentences
+                        paragraphs_count:
+                          type: integer
+                          description: Number of paragraphs
+                        words_count:
+                          type: integer
+                          description: Number of words
+                        characters_count:
+                          type: integer
+                          description: Number of characters
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '402':
+          description: No points left on account
+          content:
+            application/json:
+              schema:
+                description: No points left on account
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '404':
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                description: Person not found
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/companies:
+    get:
+      summary: List & search companies
+      tags:
+      - Reference
+      description: Directory of organizations and brands with Wikidata-enriched profiles (headquarters, founded, website, key people, subsidiaries). Filter by name or Wikidata ID. Pivot to coverage via the `links.articles` URL.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: name
+        required: false
+        description: Filter by company name (substring match).
+      - schema:
+          type: string
+        in: query
+        name: wikidata_id
+        required: false
+        description: Filter by Wikidata ID (e.g. Q95 or 95).
+      - schema:
+          type: integer
+        in: query
+        name: page
+        required: false
+        description: Page number (default 1).
+      - schema:
+          type: integer
+        in: query
+        name: per_page
+        required: false
+        description: Results per page (default 100, max 250; the Free plan is capped at 10 and Starter at 50).
+      responses:
+        '200':
+          description: Paginated list of companies
+          content:
+            application/json:
+              schema:
+                description: Paginated list of companies
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - ok
+                  limit:
+                    type: integer
+                    description: Results per page
+                  page:
+                    type: integer
+                    description: Current page number
+                  has_next_pages:
+                    type: boolean
+                    description: Whether more pages are available
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Company (entity) ID
+                        name:
+                          type: string
+                          description: Company name
+                        type:
+                          type: string
+                          description: Entity type (organization or brand)
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: string
+                              description: Link to this reference profile
+                            articles:
+                              type: string
+                              description: Link to articles mentioning this entity
+                            wikipedia:
+                              type: string
+                              description: Wikipedia URL (empty if unknown)
+                            wikidata:
+                              type: string
+                              description: Wikidata URL (empty if unknown)
+                        profile:
+                          type:
+                          - object
+                          - 'null'
+                          description: Wikidata-enriched metadata (varies by entity)
+                          additionalProperties: true
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/companies/{id}:
+    get:
+      summary: Get a company profile
+      tags:
+      - Reference
+      description: Returns a single company profile with Wikidata-enriched metadata and links to coverage.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: coverage
+        required: false
+        description: Set to "false" to skip the coverage block (article counts, timeline, top sources/topics).
+      - schema:
+          type: integer
+        in: path
+        name: id
+        required: true
+        description: Company (entity) ID.
+      responses:
+        '200':
+          description: A single company profile
+          content:
+            application/json:
+              schema:
+                description: A single company profile
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Company (entity) ID
+                  name:
+                    type: string
+                    description: Company name
+                  type:
+                    type: string
+                    description: Entity type (organization or brand)
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        description: Link to this reference profile
+                      articles:
+                        type: string
+                        description: Link to articles mentioning this entity
+                      wikipedia:
+                        type: string
+                        description: Wikipedia URL (empty if unknown)
+                      wikidata:
+                        type: string
+                        description: Wikidata URL (empty if unknown)
+                  profile:
+                    type:
+                    - object
+                    - 'null'
+                    description: Wikidata-enriched metadata (varies by entity)
+                    additionalProperties: true
+                  coverage:
+                    type:
+                    - object
+                    - 'null'
+                    description: Aggregated coverage stats (omitted when coverage=false, null on error)
+                    properties:
+                      article_count:
+                        type: integer
+                        description: Total articles in coverage scope
+                      first_seen:
+                        type:
+                        - string
+                        - 'null'
+                        description: Date of the earliest article (YYYY-MM-DD)
+                      last_seen:
+                        type:
+                        - string
+                        - 'null'
+                        description: Date of the latest article (YYYY-MM-DD)
+                      sentiment:
+                        type: object
+                        properties:
+                          positive:
+                            type: integer
+                          neutral:
+                            type: integer
+                          negative:
+                            type: integer
+                      momentum:
+                        type: object
+                        properties:
+                          last_30_days:
+                            type: integer
+                          previous_30_days:
+                            type: integer
+                          change_pct:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Percent change vs previous 30 days
+                      timeline:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            period:
+                              type: string
+                              description: Month bucket (YYYY-MM-DD)
+                            count:
+                              type: integer
+                      top_sources:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            domain:
+                              type: string
+                            count:
+                              type: integer
+                      top_topics:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - string
+                              description: Item ID
+                            name:
+                              type: string
+                            count:
+                              type: integer
+                      top_countries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            code:
+                              type: string
+                            count:
+                              type: integer
+                      top_languages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            code:
+                              type: string
+                            count:
+                              type: integer
+                      related_entities:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - string
+                              description: Item ID
+                            name:
+                              type: string
+                            count:
+                              type: integer
+                  recent_articles:
+                    type: array
+                    description: Up to 5 most recent articles (full article objects)
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Unique article ID
+                        href:
+                          type:
+                          - string
+                          - 'null'
+                          description: Original article URL
+                        published_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Publication date in ISO 8601
+                        title:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article title
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article description (plain text)
+                        body:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article body (plain text)
+                        body_html:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article body (HTML)
+                        language:
+                          type: string
+                          description: ISO 639-1 language code
+                        translations:
+                          type: object
+                          description: Machine translations of the article title and description. Always present; fields stay null for English articles and for languages without a translation model
+                          properties:
+                            en:
+                              type: object
+                              properties:
+                                title:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Title translated to English
+                                description:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Description translated to English (plain text)
+                        author:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Author ID
+                            name:
+                              type: string
+                              description: Author name
+                        image:
+                          type: string
+                          description: Main article image URL
+                        categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Category ID
+                              name:
+                                type: string
+                                description: Category name
+                              score:
+                                type: number
+                                description: Relevance score
+                              taxonomy:
+                                type: string
+                                description: Taxonomy identifier
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to category endpoint
+                        topics:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: Topic ID
+                              name:
+                                type: string
+                                description: Topic name
+                              score:
+                                type: number
+                                description: Relevance score
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to topic endpoint
+                        industries:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Industry ID
+                              name:
+                                type: string
+                                description: Industry name
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to industry endpoint
+                        entities:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Entity ID
+                              name:
+                                type: string
+                                description: Entity name
+                              type:
+                                type: string
+                                enum:
+                                - person
+                                - location
+                                - organization
+                                - brand
+                                - product
+                                - natural-disaster
+                                - disease
+                                - event
+                                - sport
+                                - unknown
+                                description: Entity type
+                              frequency:
+                                type: integer
+                                description: Number of mentions in the article
+                              sentiment:
+                                type: object
+                                description: Sentiment toward this entity (aggregated across its mentions)
+                                properties:
+                                  score:
+                                    type: number
+                                    description: Entity sentiment score from -1 (negative) to 1 (positive)
+                                  polarity:
+                                    type: string
+                                    enum:
+                                    - positive
+                                    - negative
+                                    - neutral
+                                    - ''
+                                    description: Entity sentiment polarity
+                                  mentions:
+                                    type: object
+                                    description: Per-mention polarity breakdown
+                                    properties:
+                                      positive:
+                                        type: integer
+                                      neutral:
+                                        type: integer
+                                      negative:
+                                        type: integer
+                              title:
+                                type: object
+                                properties:
+                                  pos:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        start:
+                                          type: integer
+                                          description: Start character offset
+                                        end:
+                                          type: integer
+                                          description: End character offset
+                                    description: Mention positions in title
+                              body:
+                                type: object
+                                properties:
+                                  pos:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        start:
+                                          type: integer
+                                          description: Start character offset
+                                        end:
+                                          type: integer
+                                          description: End character offset
+                                    description: Mention positions in body
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to entity endpoint
+                                  wikipedia:
+                                    type: string
+                                    description: Wikipedia URL
+                                  wikidata:
+                                    type: string
+                                    description: Wikidata URL
+                              metadata:
+                                type: object
+                                description: Additional entity metadata (varies by entity type)
+                                additionalProperties: true
+                        locations_mentioned:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Location name
+                              country:
+                                type: string
+                                description: Country code
+                              lat:
+                                type:
+                                - number
+                                - 'null'
+                                description: Latitude
+                              lng:
+                                type:
+                                - number
+                                - 'null'
+                                description: Longitude
+                              type:
+                                type: string
+                                description: Location type
+                        source:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Source ID
+                            domain:
+                              type: string
+                              description: Source domain
+                            home_page_url:
+                              type: string
+                              description: Source home page URL
+                            type:
+                              type: string
+                              description: Source type
+                            bias:
+                              type: string
+                              description: Media bias (left, center, right)
+                            rankings:
+                              type: object
+                              properties:
+                                opr:
+                                  type: integer
+                                  description: Open PageRank score
+                            location:
+                              type: object
+                              properties:
+                                country_name:
+                                  type: string
+                                  description: Source country name
+                                country_code:
+                                  type: string
+                                  description: Source country ISO code
+                            favicon:
+                              type: string
+                              description: Source favicon URL
+                        sentiment:
+                          type: object
+                          properties:
+                            overall:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                            title:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                            body:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                        summary:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              sentence:
+                                type: string
+                                description: Summary sentence
+                              sentiment:
+                                type: object
+                                properties:
+                                  score:
+                                    type: number
+                                    description: Sentiment score from -1 (negative) to 1 (positive)
+                                  polarity:
+                                    type: string
+                                    enum:
+                                    - positive
+                                    - negative
+                                    - neutral
+                                    - ''
+                                    description: Sentiment polarity
+                        readability:
+                          type: object
+                          properties:
+                            flesch_kincaid_grade:
+                              type: number
+                              description: Flesch-Kincaid grade level
+                            flesch_reading_ease:
+                              type: number
+                              description: Flesch Reading Ease score (0-100)
+                            automated_readability_index:
+                              type: number
+                              description: Automated Readability Index
+                            difficulty_level:
+                              type: string
+                              enum:
+                              - beginner
+                              - intermediate
+                              - advanced
+                              - expert
+                              - unknown
+                              description: Difficulty level
+                            target_audience:
+                              type: string
+                              enum:
+                              - children
+                              - general
+                              - professional
+                              - academic
+                              - unknown
+                              description: Target audience
+                            reading_age:
+                              type: number
+                              description: Estimated reading age
+                            avg_words_per_sentence:
+                              type: number
+                              description: Average words per sentence
+                            avg_syllables_per_word:
+                              type: number
+                              description: Average syllables per word
+                        keywords:
+                          type: array
+                          items:
+                            type: string
+                          description: Article keywords
+                        links:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                description: Link URL
+                              type:
+                                type: string
+                                description: Link type
+                        media:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                description: Media URL
+                              type:
+                                type: string
+                                description: Media type (image, video, etc.)
+                        shares:
+                          type: object
+                          properties:
+                            total:
+                              type: integer
+                              description: Total social shares
+                            facebook:
+                              type: integer
+                              description: Facebook shares
+                            twitter:
+                              type: integer
+                              description: Twitter/X shares
+                            reddit:
+                              type: integer
+                              description: Reddit shares
+                        story:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: Story ID
+                            uri:
+                              type: string
+                              description: Story endpoint URI
+                        is_duplicate:
+                          type: boolean
+                          description: Whether this is a duplicate article
+                        is_free:
+                          type: boolean
+                          description: Whether the article is freely accessible
+                        is_breaking:
+                          type: boolean
+                          description: Whether this is breaking news
+                        read_time:
+                          type: integer
+                          description: Estimated read time in minutes
+                        sentences_count:
+                          type: integer
+                          description: Number of sentences
+                        paragraphs_count:
+                          type: integer
+                          description: Number of paragraphs
+                        words_count:
+                          type: integer
+                          description: Number of words
+                        characters_count:
+                          type: integer
+                          description: Number of characters
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '402':
+          description: No points left on account
+          content:
+            application/json:
+              schema:
+                description: No points left on account
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '404':
+          description: Company not found
+          content:
+            application/json:
+              schema:
+                description: Company not found
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/journalists:
+    get:
+      summary: List & search journalists
+      tags:
+      - Reference
+      description: 'Directory of journalists, normalized by name (bylines across multiple outlets are merged into one record with an `outlets` array). Filter by name. Note: exact namesakes and generic bylines (e.g. "admin") may be merged — true disambiguation is planned for a later release.'
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: name
+        required: false
+        description: Filter by journalist name (substring match).
+      - schema:
+          type: integer
+        in: query
+        name: page
+        required: false
+        description: Page number (default 1).
+      - schema:
+          type: integer
+        in: query
+        name: per_page
+        required: false
+        description: Results per page (default 100, max 250; the Free plan is capped at 10 and Starter at 50).
+      responses:
+        '200':
+          description: Paginated list of journalists
+          content:
+            application/json:
+              schema:
+                description: Paginated list of journalists
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - ok
+                  limit:
+                    type: integer
+                    description: Results per page
+                  page:
+                    type: integer
+                    description: Current page number
+                  has_next_pages:
+                    type: boolean
+                    description: Whether more pages are available
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Journalist (author) ID
+                        name:
+                          type: string
+                          description: Journalist name
+                        outlets:
+                          type: array
+                          description: Outlets the journalist writes for
+                          items:
+                            type: object
+                            additionalProperties: true
+                        outlet_count:
+                          type: integer
+                          description: Number of outlets (list endpoint only)
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: string
+                              description: Link to this journalist profile
+                            articles:
+                              type: string
+                              description: Link to articles by this journalist
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/journalists/{id}:
+    get:
+      summary: Get a journalist profile
+      tags:
+      - Reference
+      description: 'Returns a journalist profile: name, all `outlets` they publish under (merged by name), and a `coverage` block (article counts, timeline, sentiment, top topics, top covered entities).'
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: coverage
+        required: false
+        description: Set to "false" to skip the coverage block (activity, timeline, top topics/entities).
+      - schema:
+          type: integer
+        in: path
+        name: id
+        required: true
+        description: Journalist (author) ID.
+      responses:
+        '200':
+          description: A single journalist profile
+          content:
+            application/json:
+              schema:
+                description: A single journalist profile
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Journalist (author) ID
+                  name:
+                    type: string
+                    description: Journalist name
+                  outlets:
+                    type: array
+                    description: Outlets the journalist writes for
+                    items:
+                      type: object
+                      additionalProperties: true
+                  outlet_count:
+                    type: integer
+                    description: Number of outlets (list endpoint only)
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        description: Link to this journalist profile
+                      articles:
+                        type: string
+                        description: Link to articles by this journalist
+                  coverage:
+                    type:
+                    - object
+                    - 'null'
+                    description: Aggregated coverage stats (omitted when coverage=false, null on error)
+                    properties:
+                      article_count:
+                        type: integer
+                        description: Total articles in coverage scope
+                      first_seen:
+                        type:
+                        - string
+                        - 'null'
+                        description: Date of the earliest article (YYYY-MM-DD)
+                      last_seen:
+                        type:
+                        - string
+                        - 'null'
+                        description: Date of the latest article (YYYY-MM-DD)
+                      sentiment:
+                        type: object
+                        properties:
+                          positive:
+                            type: integer
+                          neutral:
+                            type: integer
+                          negative:
+                            type: integer
+                      momentum:
+                        type: object
+                        properties:
+                          last_30_days:
+                            type: integer
+                          previous_30_days:
+                            type: integer
+                          change_pct:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Percent change vs previous 30 days
+                      timeline:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            period:
+                              type: string
+                              description: Month bucket (YYYY-MM-DD)
+                            count:
+                              type: integer
+                      top_topics:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - string
+                              description: Item ID
+                            name:
+                              type: string
+                            count:
+                              type: integer
+                      top_entities:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - string
+                              description: Item ID
+                            name:
+                              type: string
+                            count:
+                              type: integer
+                      top_countries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            code:
+                              type: string
+                            count:
+                              type: integer
+                      top_languages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            code:
+                              type: string
+                            count:
+                              type: integer
+                  recent_articles:
+                    type: array
+                    description: Up to 5 most recent articles (full article objects)
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Unique article ID
+                        href:
+                          type:
+                          - string
+                          - 'null'
+                          description: Original article URL
+                        published_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Publication date in ISO 8601
+                        title:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article title
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article description (plain text)
+                        body:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article body (plain text)
+                        body_html:
+                          type:
+                          - string
+                          - 'null'
+                          description: Article body (HTML)
+                        language:
+                          type: string
+                          description: ISO 639-1 language code
+                        translations:
+                          type: object
+                          description: Machine translations of the article title and description. Always present; fields stay null for English articles and for languages without a translation model
+                          properties:
+                            en:
+                              type: object
+                              properties:
+                                title:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Title translated to English
+                                description:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Description translated to English (plain text)
+                        author:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Author ID
+                            name:
+                              type: string
+                              description: Author name
+                        image:
+                          type: string
+                          description: Main article image URL
+                        categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Category ID
+                              name:
+                                type: string
+                                description: Category name
+                              score:
+                                type: number
+                                description: Relevance score
+                              taxonomy:
+                                type: string
+                                description: Taxonomy identifier
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to category endpoint
+                        topics:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: Topic ID
+                              name:
+                                type: string
+                                description: Topic name
+                              score:
+                                type: number
+                                description: Relevance score
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to topic endpoint
+                        industries:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Industry ID
+                              name:
+                                type: string
+                                description: Industry name
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to industry endpoint
+                        entities:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                description: Entity ID
+                              name:
+                                type: string
+                                description: Entity name
+                              type:
+                                type: string
+                                enum:
+                                - person
+                                - location
+                                - organization
+                                - brand
+                                - product
+                                - natural-disaster
+                                - disease
+                                - event
+                                - sport
+                                - unknown
+                                description: Entity type
+                              frequency:
+                                type: integer
+                                description: Number of mentions in the article
+                              sentiment:
+                                type: object
+                                description: Sentiment toward this entity (aggregated across its mentions)
+                                properties:
+                                  score:
+                                    type: number
+                                    description: Entity sentiment score from -1 (negative) to 1 (positive)
+                                  polarity:
+                                    type: string
+                                    enum:
+                                    - positive
+                                    - negative
+                                    - neutral
+                                    - ''
+                                    description: Entity sentiment polarity
+                                  mentions:
+                                    type: object
+                                    description: Per-mention polarity breakdown
+                                    properties:
+                                      positive:
+                                        type: integer
+                                      neutral:
+                                        type: integer
+                                      negative:
+                                        type: integer
+                              title:
+                                type: object
+                                properties:
+                                  pos:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        start:
+                                          type: integer
+                                          description: Start character offset
+                                        end:
+                                          type: integer
+                                          description: End character offset
+                                    description: Mention positions in title
+                              body:
+                                type: object
+                                properties:
+                                  pos:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        start:
+                                          type: integer
+                                          description: Start character offset
+                                        end:
+                                          type: integer
+                                          description: End character offset
+                                    description: Mention positions in body
+                              links:
+                                type: object
+                                properties:
+                                  self:
+                                    type: string
+                                    description: Link to entity endpoint
+                                  wikipedia:
+                                    type: string
+                                    description: Wikipedia URL
+                                  wikidata:
+                                    type: string
+                                    description: Wikidata URL
+                              metadata:
+                                type: object
+                                description: Additional entity metadata (varies by entity type)
+                                additionalProperties: true
+                        locations_mentioned:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Location name
+                              country:
+                                type: string
+                                description: Country code
+                              lat:
+                                type:
+                                - number
+                                - 'null'
+                                description: Latitude
+                              lng:
+                                type:
+                                - number
+                                - 'null'
+                                description: Longitude
+                              type:
+                                type: string
+                                description: Location type
+                        source:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Source ID
+                            domain:
+                              type: string
+                              description: Source domain
+                            home_page_url:
+                              type: string
+                              description: Source home page URL
+                            type:
+                              type: string
+                              description: Source type
+                            bias:
+                              type: string
+                              description: Media bias (left, center, right)
+                            rankings:
+                              type: object
+                              properties:
+                                opr:
+                                  type: integer
+                                  description: Open PageRank score
+                            location:
+                              type: object
+                              properties:
+                                country_name:
+                                  type: string
+                                  description: Source country name
+                                country_code:
+                                  type: string
+                                  description: Source country ISO code
+                            favicon:
+                              type: string
+                              description: Source favicon URL
+                        sentiment:
+                          type: object
+                          properties:
+                            overall:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                            title:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                            body:
+                              type: object
+                              properties:
+                                score:
+                                  type: number
+                                  description: Sentiment score from -1 (negative) to 1 (positive)
+                                polarity:
+                                  type: string
+                                  enum:
+                                  - positive
+                                  - negative
+                                  - neutral
+                                  - ''
+                                  description: Sentiment polarity
+                        summary:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              sentence:
+                                type: string
+                                description: Summary sentence
+                              sentiment:
+                                type: object
+                                properties:
+                                  score:
+                                    type: number
+                                    description: Sentiment score from -1 (negative) to 1 (positive)
+                                  polarity:
+                                    type: string
+                                    enum:
+                                    - positive
+                                    - negative
+                                    - neutral
+                                    - ''
+                                    description: Sentiment polarity
+                        readability:
+                          type: object
+                          properties:
+                            flesch_kincaid_grade:
+                              type: number
+                              description: Flesch-Kincaid grade level
+                            flesch_reading_ease:
+                              type: number
+                              description: Flesch Reading Ease score (0-100)
+                            automated_readability_index:
+                              type: number
+                              description: Automated Readability Index
+                            difficulty_level:
+                              type: string
+                              enum:
+                              - beginner
+                              - intermediate
+                              - advanced
+                              - expert
+                              - unknown
+                              description: Difficulty level
+                            target_audience:
+                              type: string
+                              enum:
+                              - children
+                              - general
+                              - professional
+                              - academic
+                              - unknown
+                              description: Target audience
+                            reading_age:
+                              type: number
+                              description: Estimated reading age
+                            avg_words_per_sentence:
+                              type: number
+                              description: Average words per sentence
+                            avg_syllables_per_word:
+                              type: number
+                              description: Average syllables per word
+                        keywords:
+                          type: array
+                          items:
+                            type: string
+                          description: Article keywords
+                        links:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                description: Link URL
+                              type:
+                                type: string
+                                description: Link type
+                        media:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                description: Media URL
+                              type:
+                                type: string
+                                description: Media type (image, video, etc.)
+                        shares:
+                          type: object
+                          properties:
+                            total:
+                              type: integer
+                              description: Total social shares
+                            facebook:
+                              type: integer
+                              description: Facebook shares
+                            twitter:
+                              type: integer
+                              description: Twitter/X shares
+                            reddit:
+                              type: integer
+                              description: Reddit shares
+                        story:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: Story ID
+                            uri:
+                              type: string
+                              description: Story endpoint URI
+                        is_duplicate:
+                          type: boolean
+                          description: Whether this is a duplicate article
+                        is_free:
+                          type: boolean
+                          description: Whether the article is freely accessible
+                        is_breaking:
+                          type: boolean
+                          description: Whether this is breaking news
+                        read_time:
+                          type: integer
+                          description: Estimated read time in minutes
+                        sentences_count:
+                          type: integer
+                          description: Number of sentences
+                        paragraphs_count:
+                          type: integer
+                          description: Number of paragraphs
+                        words_count:
+                          type: integer
+                          description: Number of words
+                        characters_count:
+                          type: integer
+                          description: Number of characters
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '402':
+          description: No points left on account
+          content:
+            application/json:
+              schema:
+                description: No points left on account
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '404':
+          description: Journalist not found
+          content:
+            application/json:
+              schema:
+                description: Journalist not found
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed via X-API-Key header
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as query parameter
+externalDocs:
+  description: APITube News API Documentation
+  url: https://docs.apitube.io

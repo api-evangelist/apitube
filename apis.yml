@@ -114,6 +114,16 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/apitube-system-api-openapi.yml
+- aid: apitube:apitube-utilities-api
+  name: APITube Utilities API
+  description: Helper endpoints for building queries
+  humanURL: https://docs.apitube.io
+  baseURL: https://api.apitube.io
+  tags:
+  - Utilities
+  properties:
+  - type: OpenAPI
+    url: openapi/apitube-utilities-api-openapi.yml
 common:
 - type: APICatalog
   url: well-known/apitube-api-catalog.json

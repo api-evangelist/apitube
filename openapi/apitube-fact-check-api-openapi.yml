@@ -1,0 +1,583 @@
+openapi: 3.2.0
+info:
+  title: APITube News Fact Check API
+  version: 1.0.0
+  summary: Search and filter news articles from thousands of sources worldwide.
+  description: 'APITube News API provides programmatic access to a comprehensive, real-time news database aggregated from thousands of sources worldwide. Use it to search, filter, and retrieve news articles with advanced query capabilities.
+
+
+    ## Key Endpoints
+
+
+    - **Everything** (`/v1/news/everything`) — full-text search across all indexed articles with filters by title, date range, language, country, source, sentiment, category, topic, industry, and named entities (people, organizations, locations, brands, etc.).
+
+    - **Top Headlines** (`/v1/news/top-headlines`) — breaking and trending news from high-authority sources ranked by OPR score.
+
+    - **Story** (`/v1/news/story/{articleId}`) — retrieve related articles for a given story.
+
+    - **Article** (`/v1/news/article`) — fetch one or more articles by ID.
+
+    - **Dictionaries** — list available categories, topics, industries, and entities.
+
+    - **Trends** — discover trending topics and entities over time.
+
+    - **Stream** (`/v1/news/stream`) — real-time Server-Sent Events (SSE) stream of new articles.
+
+    - **Webhooks** — subscribe to push notifications for new articles matching your filters.
+
+
+    ## Export Formats
+
+
+    JSON (default), CSV, TSV, XML, RSS, XLSX, Parquet, JSONL, and NDJSON.
+
+
+    ## Authentication
+
+
+    All requests require an API key passed via the `X-API-Key` header or the `api_key` query parameter.'
+  contact:
+    name: APITube Support
+    url: https://apitube.io
+    email: support@apitube.io
+  termsOfService: https://apitube.io/terms/terms-of-service
+servers:
+- url: https://api.apitube.io
+security:
+- ApiKeyHeader: []
+- ApiKeyQuery: []
+tags:
+- name: Fact Check
+  description: Verify factual claims against the live news corpus (retrieval-augmented). Returns per-claim verdicts on an 8-level scale with confidence, explanation, and supporting evidence.
+paths:
+  /v1/fact-check:
+    post:
+      summary: Fact-check an article or a claim
+      tags:
+      - Fact Check
+      description: Verifies factual claims against APITube’s live news corpus (retrieval-augmented). Accepts an article `id` (loaded from the corpus), raw article `text`, or a single `claim`. Returns per-claim verdicts on an 8-level scale with calibrated confidence, an explanation, and the supporting/refuting evidence articles.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: APITube article id to fact-check. The article is loaded from the corpus and its claims are extracted and verified. Takes priority over `text` and `claim`.
+                  example: 123456789
+                text:
+                  type: string
+                  description: Raw article text (title + body), 100–10000 characters. Claims are extracted automatically.
+                  minLength: 100
+                  maxLength: 10000
+                claim:
+                  type: string
+                  description: A single factual statement to verify directly (5–500 characters).
+                  minLength: 5
+                  maxLength: 500
+                  example: OpenAI released GPT-5 in 2024
+                max_claims:
+                  type: integer
+                  description: Maximum number of claims to extract and verify (capped server-side).
+                  example: 5
+                evidence_per_claim:
+                  type: integer
+                  description: Maximum number of evidence articles to retrieve per claim (capped server-side).
+                  example: 5
+      responses:
+        '200':
+          description: Fact-check result
+          content:
+            application/json:
+              schema:
+                description: Fact-check result
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - ok
+                  request_id:
+                    type:
+                    - string
+                    - 'null'
+                  input:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - id
+                        - text
+                        - claim
+                      language:
+                        type: string
+                  summary:
+                    type: object
+                    properties:
+                      overall_verdict:
+                        type: string
+                        enum:
+                        - 'true'
+                        - mostly_true
+                        - mixed
+                        - misleading
+                        - mostly_false
+                        - 'false'
+                        - unverified
+                        - outdated
+                      overall_confidence:
+                        type: number
+                      claims_total:
+                        type: integer
+                      claims_checked:
+                        type: integer
+                      verdict_breakdown:
+                        type: object
+                        additionalProperties:
+                          type: integer
+                  claims:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        claim:
+                          type: string
+                        normalized_claim:
+                          type: string
+                        checkworthy:
+                          type: boolean
+                        verdict:
+                          type: string
+                          enum:
+                          - 'true'
+                          - mostly_true
+                          - mixed
+                          - misleading
+                          - mostly_false
+                          - 'false'
+                          - unverified
+                          - outdated
+                        confidence:
+                          type: number
+                          description: Calibrated confidence in the verdict (0..1)
+                        as_of:
+                          type: string
+                          description: Date the verdict is valid as of (YYYY-MM-DD)
+                        explanation:
+                          type: string
+                        evidence:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              article_id:
+                                type: integer
+                                description: APITube article id of the evidence
+                              title:
+                                type: string
+                              url:
+                                type: string
+                              source:
+                                type: string
+                                description: Source domain
+                              source_authority:
+                                type: integer
+                                description: Source authority/OPR rank (higher = more authoritative)
+                              published_at:
+                                type:
+                                - string
+                                - 'null'
+                                format: date-time
+                              snippet:
+                                type: string
+                              stance:
+                                type: string
+                                enum:
+                                - supports
+                                - refutes
+                                - neutral
+                              relevance:
+                                type: number
+                                description: Relevance of the evidence to the claim (0..1)
+        '400':
+          description: Invalid request (no input, or out-of-range text/claim/id)
+          content:
+            application/json:
+              schema:
+                description: Invalid request (no input, or out-of-range text/claim/id)
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '402':
+          description: No points / balance on the account
+          content:
+            application/json:
+              schema:
+                description: No points / balance on the account
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '403':
+          description: Not available on the free plan, or API key lacks the fact_check scope
+          content:
+            application/json:
+              schema:
+                description: Not available on the free plan, or API key lacks the fact_check scope
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '404':
+          description: Article with the provided id was not found
+          content:
+            application/json:
+              schema:
+                description: Article with the provided id was not found
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                description: Rate limit exceeded
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '502':
+          description: Fact-check upstream temporarily unavailable
+          content:
+            application/json:
+              schema:
+                description: Fact-check upstream temporarily unavailable
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed via X-API-Key header
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as query parameter
+externalDocs:
+  description: APITube News API Documentation
+  url: https://docs.apitube.io

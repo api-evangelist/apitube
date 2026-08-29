@@ -1,0 +1,114 @@
+openapi: 3.2.0
+info:
+  title: Apitube Account API
+  version: 1.0.0
+  x-refined-note:
+  - x-logo differs across the merged source definitions and was not carried
+  description: 'Operations tagged Account across 2 of this provider''s published API definitions: apitube-apex-openapi.json, apitube-api-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.apitube.io
+  description: Production API server
+security:
+- ApiKeyHeader: []
+- ApiKeyQuery: []
+tags:
+- name: Account
+  description: Account management and quota information
+paths:
+  /v1/balance:
+    get:
+      summary: Get account balance and quota
+      description: Retrieve current API usage, remaining quota, and subscription plan information for the authenticated account.
+      operationId: getBalance
+      tags:
+      - Account
+      parameters:
+      - name: api_key
+        in: query
+        description: Your API key (alternative to X-API-Key header)
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Account balance and quota information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    servers:
+    - url: https://api.apitube.io
+      description: Production API server
+components:
+  schemas:
+    BalanceResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        plan:
+          type: string
+          example: professional
+        requests:
+          type: object
+          properties:
+            used:
+              type: integer
+            limit:
+              type: integer
+            remaining:
+              type: integer
+        reset_at:
+          type: string
+          format: date-time
+          description: When the quota resets
+    ErrorResponse:
+      type: object
+      required:
+      - status
+      - code
+      - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Machine-readable error identifier
+        message:
+          type: string
+          description: Human-readable error description
+        links:
+          type: object
+          properties:
+            about:
+              type: string
+              description: Documentation URL for this error
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            code: unauthorized
+            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed as a request header
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as a query parameter
+x-refined-from:
+- apitube-apex-openapi.json
+- apitube-api-openapi.json

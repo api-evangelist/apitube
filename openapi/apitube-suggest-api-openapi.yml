@@ -1,0 +1,687 @@
+openapi: 3.2.0
+info:
+  title: APITube News Suggest API
+  version: 1.0.0
+  summary: Search and filter news articles from thousands of sources worldwide.
+  description: 'APITube News API provides programmatic access to a comprehensive, real-time news database aggregated from thousands of sources worldwide. Use it to search, filter, and retrieve news articles with advanced query capabilities.
+
+
+    ## Key Endpoints
+
+
+    - **Everything** (`/v1/news/everything`) — full-text search across all indexed articles with filters by title, date range, language, country, source, sentiment, category, topic, industry, and named entities (people, organizations, locations, brands, etc.).
+
+    - **Top Headlines** (`/v1/news/top-headlines`) — breaking and trending news from high-authority sources ranked by OPR score.
+
+    - **Story** (`/v1/news/story/{articleId}`) — retrieve related articles for a given story.
+
+    - **Article** (`/v1/news/article`) — fetch one or more articles by ID.
+
+    - **Dictionaries** — list available categories, topics, industries, and entities.
+
+    - **Trends** — discover trending topics and entities over time.
+
+    - **Stream** (`/v1/news/stream`) — real-time Server-Sent Events (SSE) stream of new articles.
+
+    - **Webhooks** — subscribe to push notifications for new articles matching your filters.
+
+
+    ## Export Formats
+
+
+    JSON (default), CSV, TSV, XML, RSS, XLSX, Parquet, JSONL, and NDJSON.
+
+
+    ## Authentication
+
+
+    All requests require an API key passed via the `X-API-Key` header or the `api_key` query parameter.'
+  contact:
+    name: APITube Support
+    url: https://apitube.io
+    email: support@apitube.io
+  termsOfService: https://apitube.io/terms/terms-of-service
+servers:
+- url: https://api.apitube.io
+security:
+- ApiKeyHeader: []
+- ApiKeyQuery: []
+tags:
+- name: Suggest
+  description: Autocomplete and typeahead suggestions for entities.
+paths:
+  /v1/suggest/entities:
+    get:
+      summary: Autocomplete entities
+      tags:
+      - Suggest
+      description: Returns entity suggestions matching a given prefix. Useful for building autocomplete/typeahead UI.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: prefix
+        required: true
+        description: Search prefix for entity name. Required.
+      responses:
+        '200':
+          description: Array of matching entities
+          content:
+            application/json:
+              schema:
+                description: Array of matching entities
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Entity ID
+                    name:
+                      type: string
+                      description: Entity name
+                    type:
+                      type: string
+                      enum:
+                      - person
+                      - location
+                      - organization
+                      - brand
+                      - product
+                      - natural-disaster
+                      - disease
+                      - event
+                      - sport
+                      - unknown
+                      description: Entity type
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          type: string
+                          description: Link to entity endpoint
+                        wikipedia:
+                          type: string
+                          description: Wikipedia URL
+                        wikidata:
+                          type: string
+                          description: Wikidata URL
+                    metadata:
+                      type: object
+                      description: Additional entity metadata
+                      additionalProperties: true
+              example:
+              - id: 5012
+                name: SpaceX
+                type: organization
+                links:
+                  self: /v1/news/entity/5012
+                  wikipedia: https://en.wikipedia.org/wiki/SpaceX
+                  wikidata: https://www.wikidata.org/wiki/Q193701
+                metadata: {}
+              - id: 9284
+                name: Spotify
+                type: brand
+                links:
+                  self: /v1/news/entity/9284
+                  wikipedia: https://en.wikipedia.org/wiki/Spotify
+                  wikidata: https://www.wikidata.org/wiki/Q689141
+                metadata: {}
+        '400':
+          description: Missing prefix parameter
+          content:
+            application/json:
+              schema:
+                description: Missing prefix parameter
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/suggest/categories:
+    get:
+      summary: Autocomplete categories
+      tags:
+      - Suggest
+      description: Returns category suggestions matching a given prefix. The returned `id` can be used directly in the `category.id` filter. Useful for building autocomplete/typeahead UI.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: prefix
+        required: true
+        description: Search prefix for category name. Required.
+      responses:
+        '200':
+          description: Array of matching categories
+          content:
+            application/json:
+              schema:
+                description: Array of matching categories
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Category ID (use in category.id filter)
+                    name:
+                      type: string
+                      description: Category name
+                    taxonomy:
+                      type: string
+                      description: Category taxonomy
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          type: string
+                          description: Link to category endpoint
+              example:
+              - id: 11100000
+                name: sport
+                taxonomy: iptc_mediatopics
+                links:
+                  self: /v1/news/category/iptc_mediatopics/11100000
+        '400':
+          description: Missing prefix parameter
+          content:
+            application/json:
+              schema:
+                description: Missing prefix parameter
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/suggest/topics:
+    get:
+      summary: Autocomplete topics
+      tags:
+      - Suggest
+      description: Returns topic suggestions matching a given prefix. The returned `id` can be used directly in the `topic.id` filter. Useful for building autocomplete/typeahead UI.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: prefix
+        required: true
+        description: Search prefix for topic name. Required.
+      responses:
+        '200':
+          description: Array of matching topics
+          content:
+            application/json:
+              schema:
+                description: Array of matching topics
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Topic ID (use in topic.id filter)
+                    name:
+                      type: string
+                      description: Topic name
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          type: string
+                          description: Link to topic endpoint
+              example:
+              - id: elections
+                name: Elections
+                links:
+                  self: /v1/news/topic/elections
+        '400':
+          description: Missing prefix parameter
+          content:
+            application/json:
+              schema:
+                description: Missing prefix parameter
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+  /v1/suggest/industries:
+    get:
+      summary: Autocomplete industries
+      tags:
+      - Suggest
+      description: Returns industry suggestions matching a given prefix. The returned `id` can be used directly in the `industry.id` filter. Useful for building autocomplete/typeahead UI.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: prefix
+        required: true
+        description: Search prefix for industry name. Required.
+      responses:
+        '200':
+          description: Array of matching industries
+          content:
+            application/json:
+              schema:
+                description: Array of matching industries
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Industry ID (use in industry.id filter)
+                    name:
+                      type: string
+                      description: Industry name
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          type: string
+                          description: Link to industry endpoint
+              example:
+              - id: 312
+                name: Technology
+                links:
+                  self: /v1/news/industry/312
+        '400':
+          description: Missing prefix parameter
+          content:
+            application/json:
+              schema:
+                description: Missing prefix parameter
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                description: Authentication error
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - not_ok
+                    description: Response status
+                  request_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Unique request identifier
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          description: HTTP status code
+                        code:
+                          type: string
+                          description: Error code (e.g. ER0201)
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        links:
+                          type: object
+                          properties:
+                            about:
+                              type: string
+                              description: Link to error documentation
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Error timestamp
+              example:
+                status: not_ok
+                request_id: req_abc123def456
+                errors:
+                - status: 401
+                  code: ER0201
+                  message: Invalid or missing API key.
+                  links:
+                    about: https://docs.apitube.io/platform/news-api/http-response-codes
+                  timestamp: '2026-03-23T14:30:00Z'
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed via X-API-Key header
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as query parameter
+externalDocs:
+  description: APITube News API Documentation
+  url: https://docs.apitube.io

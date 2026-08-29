@@ -1,0 +1,82 @@
+openapi: 3.2.0
+info:
+  title: APITube News System API
+  version: 1.0.0
+  summary: Search and filter news articles from thousands of sources worldwide.
+  description: 'APITube News API provides programmatic access to a comprehensive, real-time news database aggregated from thousands of sources worldwide. Use it to search, filter, and retrieve news articles with advanced query capabilities.
+
+
+    ## Key Endpoints
+
+
+    - **Everything** (`/v1/news/everything`) — full-text search across all indexed articles with filters by title, date range, language, country, source, sentiment, category, topic, industry, and named entities (people, organizations, locations, brands, etc.).
+
+    - **Top Headlines** (`/v1/news/top-headlines`) — breaking and trending news from high-authority sources ranked by OPR score.
+
+    - **Story** (`/v1/news/story/{articleId}`) — retrieve related articles for a given story.
+
+    - **Article** (`/v1/news/article`) — fetch one or more articles by ID.
+
+    - **Dictionaries** — list available categories, topics, industries, and entities.
+
+    - **Trends** — discover trending topics and entities over time.
+
+    - **Stream** (`/v1/news/stream`) — real-time Server-Sent Events (SSE) stream of new articles.
+
+    - **Webhooks** — subscribe to push notifications for new articles matching your filters.
+
+
+    ## Export Formats
+
+
+    JSON (default), CSV, TSV, XML, RSS, XLSX, Parquet, JSONL, and NDJSON.
+
+
+    ## Authentication
+
+
+    All requests require an API key passed via the `X-API-Key` header or the `api_key` query parameter.'
+  contact:
+    name: APITube Support
+    url: https://apitube.io
+    email: support@apitube.io
+  termsOfService: https://apitube.io/terms/terms-of-service
+servers:
+- url: https://api.apitube.io
+security:
+- ApiKeyHeader: []
+- ApiKeyQuery: []
+tags:
+- name: System
+  description: Health checks and service status.
+paths:
+  /ping:
+    get:
+      summary: Ping (Health Check)
+      tags:
+      - System
+      description: Returns "pong" if the server is running.
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                description: Server is healthy
+                type: string
+              example: pong
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed via X-API-Key header
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key passed as query parameter
+externalDocs:
+  description: APITube News API Documentation
+  url: https://docs.apitube.io
