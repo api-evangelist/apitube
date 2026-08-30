@@ -26,13 +26,10 @@ modified: '2026-08-21'
 specificationVersion: '0.23'
 tags:
 - News
-- Media
-- Data
-- Search
-- Fact Checking
-- Entities
-- MCP
-- Agents
+- media monitoring
+- news api
+- fact check
+- journalists
 tags_raw:
 - news
 - media monitoring
