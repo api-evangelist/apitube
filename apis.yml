@@ -26,10 +26,10 @@ modified: '2026-08-21'
 specificationVersion: '0.23'
 tags:
 - News
-- media monitoring
-- news api
-- fact check
-- journalists
+- Media Monitoring
+- News API
+- Fact Check
+- Journalists
 tags_raw:
 - news
 - media monitoring
