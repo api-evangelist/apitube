@@ -1,0 +1,73 @@
+generated: '2026-09-03'
+method: searched
+source: https://apitube.io/pricing
+plan_count: 5
+currency: USD
+note: >-
+  Prices confirmed from the pricing page's schema.org Offer markup (0 / 29 / 99 / 199 / 599 USD,
+  priceValidUntil 2026-12-31). Quotas cross-checked against the provider changelog (1.0.52 raised
+  Basic to 50,000 and Professional to 150,000) and the rate-limits docs. Billing cycles renew
+  every 31 days (366 on annual plans). Overage runs on an opt-in pay-as-you-go prepaid balance at
+  $0.01 per request, gated by a balance switch that is off by default (changelog 1.0.53).
+plans:
+- name: Free
+  price: 0
+  billing: monthly
+  included_quota: 100 requests per day (daily reset)
+  limits:
+    rate_limit: 10 requests/minute
+    per_page_max: 10
+    pagination: first 5 pages only (max 50 articles per query)
+    article_delay: 12 hours
+    body: 200-character preview only
+    exports: JSON only (other formats 403 ER0706)
+    gated_features: [Trends endpoint, Fact Check, MCP server, SSE stream (0 connections), prompt parameter]
+- name: Starter
+  price: 29
+  annual_price: 279
+  billing: 31-day cycle
+  included_quota: 10,000 requests per cycle
+  limits:
+    rate_limit: 50 requests/minute
+    per_page_max: 50
+    sse_connections: 2
+    webhooks: 5
+    streaming_credits: 3,000 per channel (SSE/WebSocket/webhooks)
+- name: Basic
+  price: 99
+  annual_price: 959
+  billing: 31-day cycle
+  included_quota: 50,000 requests per cycle
+  limits:
+    rate_limit: 50 requests/minute
+    per_page_max: 200
+    sse_connections: 2
+    webhooks: 5
+  note: First tier with the natural-language `prompt` parameter.
+- name: Professional
+  price: 199
+  annual_price: 1919
+  billing: 31-day cycle
+  included_quota: 150,000 requests per cycle
+  limits:
+    rate_limit: 50 requests/minute
+    per_page_max: 250
+    sse_connections: 10
+    webhooks: 20
+- name: Corporate
+  price: 599
+  billing: 31-day cycle
+  included_quota: null
+  limits:
+    rate_limit: 200 requests/minute
+    per_page_max: 250
+    sse_connections: 50
+    webhooks: 100
+  note: >-
+    The one tier with a higher burst (200 rpm). Its request quota is not stated in the page
+    markup captured — recorded null rather than guessed.
+overage:
+  model: pay-as-you-go prepaid balance
+  price_per_request: 0.01
+  currency: USD
+  note: Off by default; the dashboard balance switch must be enabled before overflow spends the balance. Optional monthly spending cap (402 ER0177 when reached).

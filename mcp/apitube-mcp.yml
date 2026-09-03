@@ -1,0 +1,48 @@
+generated: '2026-09-03'
+method: probed
+source: https://mcp.apitube.io/ (tools/list probed live 2026-09-03, HTTP 200 anonymous) + https://docs.apitube.io/platform/news-api/ai/mcp-server.md + https://github.com/apitube/news-api-mcp
+name: APITube News MCP-Server
+status: official
+description: >-
+  First-party hosted MCP server for the APITube News API. Streamable HTTP JSON-RPC at
+  https://mcp.apitube.io/ — no package to install. Two tools (search_news, suggest) and four
+  ready-made prompts (monitor_company, topic_sentiment, breaking_news, compare_coverage).
+  tools/list answers anonymously with full inputSchemas (saved verbatim to
+  mcp/apitube-tools-list.json); tool calls require an API key as Authorization: Bearer.
+  Not available on the Free plan (403 ER0706). Per-key endpoint scopes, expiry and IP
+  allowlists are enforced at the MCP layer too.
+deployment:
+  mode: remote
+  endpoint: https://mcp.apitube.io/
+  auth: api-key
+  verified: probed
+protocol:
+  transport: streamable-http
+  protocol_version: '2025-11-25'
+  negotiates_down_to: '2024-11-05'
+  server_version: 1.0.0
+  capabilities:
+  - tools
+  - prompts
+tools:
+- name: search_news
+  description: Search news articles with the full News API filter set — keywords, language, country, source domain and rank, sentiment, entities, media, dates, sorting, faceting, highlighting.
+- name: suggest
+  description: Resolve a name or prefix (e.g. "Tesla") to APITube taxonomy IDs — entity.id, category.id (IPTC medtop slugs), topic.id, industry.id — for precise search_news filters.
+prompts:
+- name: monitor_company
+  description: Coverage digest for a company
+- name: topic_sentiment
+  description: Sentiment breakdown of coverage about a topic
+- name: breaking_news
+  description: Latest breaking news, optionally by subject and country
+- name: compare_coverage
+  description: Side-by-side volume and sentiment for two subjects
+repository: https://github.com/apitube/news-api-mcp
+documentation: https://docs.apitube.io/platform/news-api/ai/mcp-server
+license: MIT
+x-evidence:
+  fetched: '2026-09-03'
+  url: https://mcp.apitube.io/
+  http_status: 200
+  note: POST tools/list returned 2 tools with full inputSchemas, no authentication required.

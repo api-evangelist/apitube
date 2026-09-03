@@ -1,0 +1,60 @@
+generated: '2026-09-03'
+method: derived
+source: mcp/apitube-tools-list.json (probed live 2026-09-03) + openapi/apitube-news-api-openapi.yml + openapi/apitube-suggest-api-openapi.yml
+note: >-
+  Binds the two live MCP tools (schemas read anonymously from tools/list) to their backing REST
+  operations. The MCP surface is a deliberately narrow gateway over the News API: search_news
+  wraps /v1/news/everything and suggest wraps the four /v1/suggest/* endpoints. Most refined
+  operations lack operationIds, so rest[] rows reference method+path where no operationId exists.
+surfaces:
+  openapi: openapi/apitube-news-api-openapi.yml
+  mcp:
+    url: https://mcp.apitube.io/
+    gated: false
+    note: tools/list with inputSchemas is anonymous; tools/call requires a Bearer API key (paid plans only)
+crosswalk:
+- tool: search_news
+  category: search
+  rest:
+  - getEverything
+  binding: 'GET /v1/news/everything'
+  confidence: high
+  note: >-
+    The tool description documents the same parameter families as the everything endpoint
+    (language.code, category.id, sentiment, entities, media, published_at, per_page), with one
+    MCP-side difference — unknown parameters are rejected with -32602 instead of the REST
+    behaviour of silently ignoring them.
+- tool: suggest
+  category: taxonomy
+  rest:
+  - suggestEntities
+  - 'GET /v1/suggest/categories'
+  - 'GET /v1/suggest/topics'
+  - 'GET /v1/suggest/industries'
+  binding: 'GET /v1/suggest/{entities|categories|topics|industries}'
+  confidence: high
+  note: One tool fans out across the four suggest endpoints by a type argument; only the entities operation carries an operationId (suggestEntities).
+mcp_only: []
+rest_only:
+- operation: 'GET /v1/news/top-headlines'
+- operation: 'GET /v1/news/trends'
+- operation: 'POST /v1/news/raw'
+- operation: 'POST /v1/news/local'
+- operation: 'POST /v1/news/story/{articleId}'
+- operation: 'POST /v1/news/article'
+- operation: 'POST /v1/news/category/{taxonomy}/{categoryId}'
+- operation: 'POST /v1/news/topic/{topicId}'
+- operation: 'POST /v1/news/industry/{industryId}'
+- operation: 'POST /v1/news/entity/{entityId}'
+- operation: 'POST /v1/news/count'
+- operation: 'POST /v1/fact-check'
+- operation: getBalance
+- operation: 'GET /v1/people'
+- operation: 'GET /v1/companies'
+- operation: 'GET /v1/journalists'
+- operation: 'GET /ping'
+coverage:
+  mcp_tools: 2
+  tools_mapped: 2
+  rest_operations: 26
+  rest_operations_covered: 5

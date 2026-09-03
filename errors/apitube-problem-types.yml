@@ -1,0 +1,108 @@
+generated: '2026-09-03'
+method: searched
+source: https://docs.apitube.io/platform/news-api/http-response-codes.md
+format: custom
+note: >-
+  APITube does NOT use RFC 9457 problem+json. Every error is a JSON envelope
+  {status: "not_ok", request_id, errors: [{status, code, message}]} with an ERnnnn code per
+  error. The docs publish a per-code reference of several hundred codes (mostly per-parameter
+  400 validation codes); the operationally significant set is captured here. Two documented
+  codes (ER0175, ER0200) are marked by the provider as never returned in practice because the
+  global auth hook answers first — an unusually honest docs page. The biggest runtime gotcha is
+  documented under Help: unrecognised REST parameters return 200 ok and are silently ignored,
+  so a typo looks like a successful unfiltered query; read back meta/user_input to verify.
+envelope:
+  status_field: status
+  request_id_field: request_id
+  errors_field: errors
+  error_shape: {status: HTTP status, code: ERnnnn, message: human-readable}
+problem_types:
+- code: ER0201
+  status: 401
+  title: API key is required
+  remediation: Provide the key via X-API-Key header, Authorization Bearer, or api_key query parameter.
+- code: ER0202
+  status: 401
+  title: API key is invalid
+- code: ER0230
+  status: 401
+  title: API key has expired
+  remediation: Check or extend the key's expiry date in the dashboard key settings.
+- code: ER0176
+  status: 402
+  title: No points on the account
+  remediation: Also returned when the balance is funded but the pay-as-you-go balance switch is off — enable it in the dashboard or wait for the quota cycle.
+- code: ER0177
+  status: 402
+  title: Monthly pay-as-you-go spending limit reached
+  remediation: Raise or remove the limit in the dashboard, or wait for the calendar month (UTC) to reset.
+- code: ER0601
+  status: 403
+  title: IP address not allowed for this API key
+- code: ER0602
+  status: 403
+  title: Domain not allowed for this API key
+- code: ER0603
+  status: 403
+  title: API key not authorized for this endpoint (missing scope)
+  remediation: Grant the key the matching endpoint scope in its settings.
+- code: ER0706
+  status: 403
+  title: Feature not available on the current plan
+  remediation: Plan gate — returned for the Trends endpoint, non-JSON exports and MCP on Free, and the prompt parameter below Basic.
+- code: ER0203
+  status: 429
+  title: Rate limit exceeded
+  remediation: Honor X-RateLimit-Reset and retry after the 1-minute window.
+- code: ER0204
+  status: 429
+  title: Temporarily banned for repeatedly exceeding rate limits
+- code: ER0184
+  status: 429
+  title: Too many concurrent requests
+- code: ER0360
+  status: 429
+  title: Concurrent SSE connection limit exceeded
+- code: ER0171
+  status: 400
+  title: per_page above the plan ceiling
+- code: ER0173
+  status: 400
+  title: Page beyond the Free plan's 5-page cap
+- code: ER0110
+  status: 400
+  title: Title search published_at window wider than 31 days
+  remediation: Issue one request per month-sized window.
+- code: ER0366
+  status: 200
+  title: Warning — title search window clamped to the last 31 days
+  remediation: Returned in meta.warnings with an x-query-window-clamped header, not as an error.
+- code: ER0179
+  status: 400
+  title: Parameter sent more than once
+- code: ER0182
+  status: 404
+  title: Endpoint not found
+- code: ER0235
+  status: 404
+  title: Article not found
+- code: ER0183
+  status: 500
+  title: Unexpected server error
+- code: ER0180
+  status: 504
+  title: Query timed out
+  remediation: Narrow the filters or the published_at range.
+- code: ER0800
+  status: 400
+  title: prompt length outside 3-500 characters
+- code: ER0801
+  status: 502
+  title: Prompt translation service unavailable (nothing charged)
+- code: ER0802
+  status: 400
+  title: Nothing usable in the prompt
+- code: ER0900
+  status: 503
+  title: Auth backend did not answer (key itself is fine)
+  remediation: Retry in a few seconds instead of reissuing the key.

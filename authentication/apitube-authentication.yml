@@ -1,0 +1,45 @@
+generated: '2026-09-03'
+method: searched
+source: https://docs.apitube.io/platform/news-api/authentication.md (upgrading the profile derived from the seven refined OpenAPI documents)
+docs: https://docs.apitube.io/platform/news-api/authentication
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+  - query
+  - bearer
+key_model:
+  prefixes: {live: api_live_, test: api_test_}
+  bearer: 'The docs also accept the key as Authorization: Bearer <key> — a third passing style the specs do not declare.'
+  test_mode: Test keys hit the live API free of quota with body/body_html truncated; X-Apitube-Mode header reports live|test. See ../sandbox/apitube-sandbox.yml.
+  restrictions: Per-key endpoint scopes (403 ER0603 when missing), expiry dates (401 ER0230), IP allowlists (403 ER0601) and referrer/domain rules (403 ER0602), configured in the dashboard.
+  rotation: Keys can be regenerated from the dashboard if compromised.
+  errors: {missing: 401 ER0201, invalid: 401 ER0202, expired: 401 ER0230}
+schemes:
+- name: ApiKeyHeader
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: API key passed as a request header
+  sources:
+  - openapi/apitube-account-api-openapi.yml
+  - openapi/apitube-fact-check-api-openapi.yml
+  - openapi/apitube-news-api-openapi.yml
+  - openapi/apitube-reference-api-openapi.yml
+  - openapi/apitube-suggest-api-openapi.yml
+  - openapi/apitube-system-api-openapi.yml
+  - openapi/apitube-utilities-api-openapi.yml
+- name: ApiKeyQuery
+  type: apiKey
+  in: query
+  parameter: api_key
+  description: API key passed as a query parameter
+  sources:
+  - openapi/apitube-account-api-openapi.yml
+  - openapi/apitube-fact-check-api-openapi.yml
+  - openapi/apitube-news-api-openapi.yml
+  - openapi/apitube-reference-api-openapi.yml
+  - openapi/apitube-suggest-api-openapi.yml
+  - openapi/apitube-system-api-openapi.yml
+  - openapi/apitube-utilities-api-openapi.yml

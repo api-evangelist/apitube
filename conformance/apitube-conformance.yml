@@ -1,0 +1,43 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/apitube-news-api-openapi.yml + https://docs.apitube.io/platform/news-api/http-response-codes.md + authentication.md
+note: >-
+  Cross-cutting and domain standards asserted from the contract and docs, never from marketing
+  prose. The one domain-standard signature in the contract is IPTC Media Topics — the news
+  industry's controlled subject taxonomy — declared in the spec itself, not just described.
+conformance:
+- id: iptc-mediatopics
+  conforms: true
+  evidence: >-
+    The contract declares the standard: category.id filters take IPTC Media Topic IDs
+    (openapi/apitube-news-api-openapi.yml line 62 "Filter by IPTC category ID", example
+    "medtop:15000000" at line 66) and article category objects carry
+    "taxonomy: iptc_mediatopics" in response examples (lines 1775, 3497, 7388). A consumer
+    already speaking IPTC medtop codes integrates with no bespoke mapping.
+- id: sse
+  conforms: true
+  evidence: /v1/news/stream delivers text/event-stream Server-Sent Events (docs sse-stream.md); standard EventSource clients work unmodified.
+- id: pagination
+  conforms: true
+  evidence: Uniform page/per_page request params with total_pages/total_results response fields across search endpoints.
+- id: cors
+  conforms: true
+  evidence: Access-Control-Allow-Origin * on every response, 204 preflight with Access-Control-Max-Age 86400 (authentication.md, "Calling the API from a browser").
+- id: rfc9457
+  conforms: false
+  evidence: Errors use a custom {status, request_id, errors[{status, code, message}]} envelope with ERnnnn codes, not application/problem+json.
+- id: oauth2
+  conforms: false
+  evidence: Authentication is API-key only (header, bearer-wrapped key, or query param); no OAuth2 flows, no authorization-server metadata on any host (probed 404).
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on every host.
+- id: idempotency
+  conforms: false
+  evidence: Not applicable in substance — the API is read-only; no Idempotency-Key mechanism exists or is needed.
+- id: rfc8594
+  conforms: false
+  evidence: No Sunset/Deprecation headers documented; breaking changes are flagged in the dated changelog only.
+- id: rfc9727
+  conforms: true
+  evidence: /.well-known/api-catalog served as application/linkset+json on apitube.io (probed 200, 2026-09-03), naming service-desc, service-doc and service-meta links.

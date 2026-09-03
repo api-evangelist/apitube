@@ -1,0 +1,44 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/_original/apitube-apex-openapi.json (13 component schemas) + openapi/apitube-news-api-openapi.yml response examples
+note: >-
+  Entity-relationship graph derived from the apex OpenAPI's component schemas and the working
+  spec's response shapes. Articles are the hub; everything else classifies or clusters them.
+  IDs are numeric except IPTC category IDs (medtop: slugs) and topic slugs.
+entities:
+- name: Article
+  description: A news article — title, body, href, published_at, language, media, translations, sentiment, and NLP enrichment.
+- name: Source
+  description: The publisher — domain, home_page_url, favicon, country, rank.
+- name: Sentiment
+  description: Overall/title/body sentiment scores (-1.0 to 1.0) and polarity.
+- name: Category
+  description: IPTC Media Topics classification (taxonomy iptc_mediatopics, id medtop:*).
+- name: Topic
+  description: Editorial topic (slug id, e.g. crypto_news).
+- name: Industry
+  description: Industry classification (numeric id).
+- name: Entity
+  description: Named entity extracted from the article — person, organization, location, brand, event, disease, disaster.
+- name: Story
+  description: A cluster of related articles about one event (retrieved via /v1/news/story/{articleId}).
+- name: Person / Company / Journalist
+  description: Wikidata-enriched directory profiles with a coverage block (Reference API /v1/people, /v1/companies, /v1/journalists).
+- name: Pagination
+  description: page, per_page, total_pages, total_results envelope fields.
+relationships:
+- {from: Article, to: Source, type: has_one, via: source}
+- {from: Article, to: Sentiment, type: has_one, via: sentiment}
+- {from: Article, to: Category, type: has_many, via: "categories[]"}
+- {from: Article, to: Topic, type: has_many, via: "topics[]"}
+- {from: Article, to: Industry, type: has_many, via: "industries[]"}
+- {from: Article, to: Entity, type: has_many, via: "entities[]"}
+- {from: Story, to: Article, type: has_many, via: "articles[] (clustered by article id)"}
+- {from: Article, to: Article, type: has_many, via: "is_duplicate / story clustering"}
+- {from: Person / Company / Journalist, to: Article, type: has_many, via: "latest articles block on the directory profile"}
+id_conventions:
+  article_id: integer
+  entity_id: integer
+  industry_id: integer
+  category_id: 'IPTC slug, medtop:NNNNNNNN'
+  topic_id: snake_case slug

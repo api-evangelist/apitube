@@ -1,0 +1,100 @@
+generated: '2026-09-03'
+method: probed
+source: live probes of apitube.io, www.apitube.io, api.apitube.io, docs.apitube.io, mcp.apitube.io
+note: >-
+  APITube serves an RFC 9727 api-catalog linkset on the apex (and www), and a second, different
+  api-catalog on the docs host whose service-desc names a third host, api-reference.apitube.io,
+  carrying the same 26-operation OpenAPI 3.1 spec as api.apitube.io/openapi.json. llms.txt is
+  served on the apex and on docs (different documents). No security.txt, no OpenID/OAuth
+  metadata, no ai-plugin, no A2A agent card on any host. api.apitube.io answers every
+  unauthenticated path 401 (key-gated edge), and mcp.apitube.io answers JSON-RPC route-not-found
+  404s — neither is an SPA catch-all, so the negatives are real.
+hosts:
+- host: apitube.io
+  documents:
+  - path: /.well-known/api-catalog
+    status: 200
+    file: apitube-api-catalog.json
+  - path: /llms.txt
+    status: 200
+    file: ../llms/apitube-llms.txt
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: www.apitube.io
+  documents:
+  - path: /.well-known/api-catalog
+    status: 200
+    note: same linkset as the apex
+  - path: /llms.txt
+    status: 200
+    note: same document as the apex
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: docs.apitube.io
+  documents:
+  - path: /.well-known/api-catalog
+    status: 200
+    file: apitube-docs-api-catalog.json
+    note: >-
+      Distinct linkset anchored at https://api.apitube.io/v1; its service-desc points at
+      https://api-reference.apitube.io/openapi.json (fetched 200, OpenAPI 3.1.0, 26 paths,
+      servers https://api.apitube.io, contact support@apitube.io).
+  - path: /llms.txt
+    status: 200
+    note: docs-site llms.txt (page index with .md twins for every docs page); distinct from the apex llms.txt
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: api.apitube.io
+  documents:
+  - path: /.well-known/api-catalog
+    status: 401
+    note: every unauthenticated path on the API host returns 401 JSON (key-gated edge), including all well-known paths
+  - path: /.well-known/security.txt
+    status: 401
+  - path: /.well-known/agent-card.json
+    status: 401
+  - path: /.well-known/agent.json
+    status: 401
+- host: mcp.apitube.io
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    note: JSON-RPC "Route not found" — the MCP server publishes no OAuth metadata; auth is a bearer API key
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404

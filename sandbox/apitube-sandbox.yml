@@ -1,0 +1,29 @@
+generated: '2026-09-03'
+method: searched
+source: https://docs.apitube.io/platform/news-api/authentication.md (Test mode) + https://docs.apitube.io/platform/news-api/tools.md
+model: test-mode keys against the live API, plus a hosted try-it explorer
+test_keys:
+  live_prefix: api_live_
+  test_prefix: api_test_
+  behavior: >-
+    Test keys hit the live API and return the real response structure with no quota or balance
+    consumed. Only body and body_html are truncated, suffixed with
+    "...[Test mode — use a live key for full content]" — title, description, entities, sentiment,
+    categories and source come through in full, including on SSE/WebSocket streams.
+  mode_header: 'X-Apitube-Mode: live | test'
+  limits:
+  - /v1/news/count caps its answer at 100 in test mode — never treat a test-key count as a real volume.
+  - /v1/news/trends keeps shape and numbers but masks each entry's value with "[Upgrade subscription plan]".
+  - Test keys are rate-limited more strictly than live keys (separate bucket).
+  management: Dashboard — Test mode toggle at the bottom of the sidebar, then create keys under API Keys; live and test keys are listed separately per mode.
+try_it_surfaces:
+- name: API Explorer
+  url: https://api-reference.apitube.io
+  notes: OpenAPI reference with a live try-it panel against the real API.
+- name: Interactive Query Builder
+  url: https://docs.apitube.io/platform/news-api/query-builder
+  notes: Assemble filters in the browser; returns the finished URL and a cURL command.
+- name: Postman Collection
+  url: https://www.postman.com/apitube/apitube/overview
+  notes: Every endpoint pre-configured.
+note: No fabricated test values — all prefixes and markers above are quoted from the provider's docs.

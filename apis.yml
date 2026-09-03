@@ -22,7 +22,7 @@ deliveryModel:
   generated: '2026-08-28'
   method: derived
 created: '2026-08-21'
-modified: '2026-08-21'
+modified: '2026-09-03'
 specificationVersion: '0.23'
 tags:
 - News
@@ -51,12 +51,16 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/apitube-news-api-openapi.yml
+  - type: Overlay
+    url: overlays/apitube-news-api-overlay.yaml
   - type: Documentation
     url: https://docs.apitube.io
   - type: APIReference
     url: https://api.apitube.io/openapi.json
   - type: MCPServer
     url: mcp/apitube-mcp-server-card.json
+  - type: ToolCrosswalk
+    url: mcp/apitube-tool-crosswalk.yml
   - type: Authentication
     url: https://docs.apitube.io
 - aid: apitube:apitube-account-api
@@ -69,6 +73,8 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/apitube-account-api-openapi.yml
+  - type: Overlay
+    url: overlays/apitube-account-api-overlay.yaml
 - aid: apitube:apitube-fact-check-api
   name: APITube Fact Check API
   description: >-
@@ -81,6 +87,8 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/apitube-fact-check-api-openapi.yml
+  - type: Overlay
+    url: overlays/apitube-fact-check-api-overlay.yaml
 - aid: apitube:apitube-reference-api
   name: APITube Reference API
   description: The Reference API from APITube — 7 operation(s) for reference.
@@ -91,6 +99,8 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/apitube-reference-api-openapi.yml
+  - type: Overlay
+    url: overlays/apitube-reference-api-overlay.yaml
 - aid: apitube:apitube-suggest-api
   name: APITube Suggest API
   description: Autocomplete and typeahead suggestions for entities.
@@ -101,6 +111,8 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/apitube-suggest-api-openapi.yml
+  - type: Overlay
+    url: overlays/apitube-suggest-api-overlay.yaml
 - aid: apitube:apitube-system-api
   name: APITube System API
   description: Health checks and service status.
@@ -111,6 +123,8 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/apitube-system-api-openapi.yml
+  - type: Overlay
+    url: overlays/apitube-system-api-overlay.yaml
 - aid: apitube:apitube-utilities-api
   name: APITube Utilities API
   description: Helper endpoints for building queries
@@ -121,20 +135,75 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/apitube-utilities-api-openapi.yml
+  - type: Overlay
+    url: overlays/apitube-utilities-api-overlay.yaml
 common:
+- type: DomainSecurity
+  url: security/apitube-domain-security.yml
+- type: Authentication
+  url: authentication/apitube-authentication.yml
 - type: APICatalog
   url: well-known/apitube-api-catalog.json
 - type: LLMsTxt
   url: llms/apitube-llms.txt
 - type: MCPServer
-  url: mcp/apitube-mcp-server-card.json
+  url: mcp/apitube-mcp.yml
 - type: Website
   url: https://apitube.io
 - type: DeveloperPortal
   url: https://docs.apitube.io
+- type: WellKnown
+  url: well-known/apitube-well-known.yml
+- type: Packages
+  url: packages/apitube-packages.yml
+- type: SDKs
+  url: packages/apitube-packages.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: RateLimits
+  url: rate-limits/apitube-rate-limits.yml
+- type: Plans
+  url: plans/apitube-plans-pricing.yml
+- type: ErrorCatalog
+  url: errors/apitube-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/apitube-lifecycle.yml
+- type: StatusPage
+  url: https://status.apitube.io/
+- type: ChangeLog
+  url: changelog/apitube-changelog.yml
+- type: Webhooks
+  url: asyncapi/apitube-webhooks.yml
+- type: Conventions
+  url: conventions/apitube-conventions.yml
+- type: Conformance
+  url: conformance/apitube-conformance.yml
+- type: Sandbox
+  url: sandbox/apitube-sandbox.yml
+- type: DataModel
+  url: data-model/apitube-data-model.yml
+- type: Postman
+  url: https://www.postman.com/apitube/apitube/overview
+- type: Pricing
+  url: https://apitube.io/pricing
+- type: TermsOfService
+  url: https://apitube.io/terms/terms-of-service
+- type: PrivacyPolicy
+  url: https://apitube.io/terms/privacy-policy
+- type: Blog
+  url: https://apitube.io/blog
+- type: GitHubOrganization
+  url: https://github.com/apitube
+- type: Support
+  url: https://apitube.io/contact
+- type: GettingStarted
+  url: https://apitube.io/product/news-api/quick-start
+- type: SignUp
+  url: https://apitube.io/#sign-up
 maintainers:
 - FN: APITube
   url: https://apitube.io
+  email: support@apitube.io
 x-provenance:
   added: '2026-08-21'
   method: searched
@@ -154,3 +223,8 @@ x-provenance:
     The MCP server at https://mcp.apitube.io/ was probed live and answered tools/list anonymously
     with two tools, search_news and suggest. The REST API was probed at
     api.apitube.io/v1/news/everything and returned 401 JSON, which is correct gating.
+x-enrichment:
+  date: '2026-09-03'
+  status: enriched
+  artifacts_added: 27
+  pass: local-v2

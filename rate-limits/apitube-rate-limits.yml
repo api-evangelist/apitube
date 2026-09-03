@@ -1,0 +1,77 @@
+generated: '2026-09-03'
+method: searched
+source: https://docs.apitube.io/platform/news-api/rate-limits.md
+limit_count: 8
+scheme: >-
+  Per-account rolling 1-minute window — every live key on an account shares one budget, so adding
+  keys does not raise the ceiling. Test keys (api_test_) count in a separate bucket with their own
+  stricter limit.
+limits:
+- scope: per-account
+  plan: Free
+  window: 1 minute (rolling)
+  limit: 10
+  note: Results additionally capped to the first 5 pages (page 6+ returns 400 ER0173); articles delayed 12 hours.
+- scope: per-account
+  plan: Starter / Basic / Professional
+  window: 1 minute (rolling)
+  limit: 50
+  note: The three tiers share the same throughput — they differ in quota and features, not requests per minute.
+- scope: per-account
+  plan: Corporate
+  window: 1 minute (rolling)
+  limit: 200
+- scope: per-endpoint
+  endpoint: /v1/fact-check
+  window: 1 minute
+  limit: 10
+  note: Separate, stricter limit because every request runs language-model inference; not available on Free.
+- scope: per-account
+  kind: concurrent SSE connections
+  limit_by_plan: {Free: 0, Starter: 2, Basic: 2, Professional: 10, Corporate: 50}
+  note: Exceeding it returns 429 ER0360.
+- scope: per-request
+  kind: max per_page
+  limit_by_plan: {Free: 10, Starter: 50, Basic: 200, Professional: 250, Corporate: 250}
+  note: Requesting more returns 400 ER0171 naming the plan ceiling; the default page size clamps to the ceiling.
+- scope: per-query
+  kind: title-search published_at window
+  limit: 31 days
+  note: >-
+    Every plan, every endpoint (incl. exports, SSE, WebSocket). Wider range returns 400 ER0110;
+    a title search with no dates searches the last 31 days and flags it with warning ER0366 and
+    an x-query-window-clamped: 31 header.
+- scope: per-account
+  kind: pay-as-you-go monthly spending limit
+  limit: user-configured (cents, UTC calendar month)
+  note: When reached, balance-billed requests return 402 ER0177 until the month resets.
+response_headers:
+- header: X-RateLimit-Limit
+  meaning: Maximum requests in the current window
+- header: X-RateLimit-Remaining
+  meaning: Requests remaining in the current window
+- header: X-RateLimit-Reset
+  meaning: Seconds until the window resets
+- header: X-Subscription-Plan
+  meaning: The key's plan (free/starter/basic/professional/corporate)
+- header: X-Points-Remaining
+  meaning: Quota points left; 0 turns the next request into 402 ER0176
+- header: X-Balance-Remaining
+  meaning: Prepaid pay-as-you-go balance left, in cents
+- header: X-Budget-Remaining
+  meaning: Cents left in this month's PAYG spending limit (present only when a limit is set)
+- header: X-Apitube-Mode
+  meaning: live or test
+- header: X-Request-ID
+  meaning: Unique request id — quote it to support
+exhaustion:
+  status: 429
+  codes:
+  - code: ER0203
+    meaning: Rate limit exceeded — retry after the window
+  - code: ER0204
+    meaning: Temporarily banned for repeatedly exceeding the limit
+  - code: ER0360
+    meaning: Concurrent SSE connection limit exceeded
+  - code: ER0184
+    meaning: Too many concurrent requests

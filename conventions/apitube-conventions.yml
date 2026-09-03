@@ -1,0 +1,66 @@
+generated: '2026-09-03'
+method: searched
+source: https://docs.apitube.io/platform/news-api/authentication.md + rate-limits.md + http-response-codes.md + help.md + openapi/apitube-news-api-openapi.yml
+note: >-
+  Cross-cutting semantics of the APITube News API. The entire public surface is READ-ONLY
+  retrieval — search, headlines, trends, reference lookups, fact-check evaluation and balance.
+  No resource is created, mutated or deleted through the API (webhooks and keys are managed in
+  the dashboard UI), so idempotency, reversibility and dry-run grade as `na` and leave the
+  denominator rather than scoring zero.
+authentication:
+  style: API key
+  methods:
+  - Authorization Bearer header (recommended)
+  - X-API-Key header
+  - api_key query parameter (discouraged — leaks into logs and history)
+  key_prefixes: {live: api_live_, test: api_test_}
+  key_restrictions: per-key endpoint scopes, expiry dates, IP allowlists and referrer rules, set in the dashboard
+  see: ../authentication/apitube-authentication.yml
+versioning:
+  style: URL path version
+  current: /v1
+pagination:
+  style: page-based
+  params: [page, per_page]
+  response_fields: [page, per_page, total_pages, total_results]
+  notes: per_page defaults to 100 clamped to the plan ceiling (10/50/200/250); Free is additionally capped to 5 pages.
+field_selection:
+  param: fl
+  notes: Comma-separated field list (e.g. fl=title,href,body). The article body is not returned unless requested via fl on some surfaces (the MCP tool documents this default).
+request_tracing:
+  header: X-Request-ID
+  response_field: request_id
+  notes: Present on every response; quote it to support.
+error_envelope:
+  shape: '{status: "not_ok", request_id, errors: [{status, code, message}]}'
+  codes: ERnnnn per-condition codes (see ../errors/apitube-problem-types.yml)
+  gotcha: >-
+    Unrecognised parameters and invalid values return 200 ok and are SILENTLY IGNORED on REST —
+    a typo runs an unfiltered query over the whole index. The response echoes what the API
+    received in user_input; read it back to verify. The MCP server behaves differently and
+    rejects unknown parameters with JSON-RPC -32602.
+rate_limit_signaling:
+  headers: [X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-Subscription-Plan, X-Points-Remaining, X-Balance-Remaining, X-Budget-Remaining, X-Apitube-Mode]
+  exhaustion_status: 429
+  see: ../rate-limits/apitube-rate-limits.yml
+cors:
+  allowed: true
+  notes: Access-Control-Allow-Origin * on every response; OPTIONS preflight answered with 204, cacheable 24h (Access-Control-Max-Age 86400).
+content_negotiation:
+  default: JSON
+  exports: [JSONL/NDJSON, XML, CSV, TSV, XLSX, Parquet]
+  notes: Non-JSON exports are gated to paid plans (403 ER0706 on Free).
+http_methods:
+  notes: Search endpoints accept both GET and POST with the same parameters.
+idempotency:
+  coverage: na
+  note: Read-only API — there is no mutating surface for an idempotency mechanism to protect. No Idempotency-Key header exists or is needed.
+reversibility:
+  grade: na
+  note: Read-only API — no write operation exists to reverse. Retrieval calls spend quota points, which are not refundable, but no state is created.
+dry_run:
+  mode: na
+  note: >-
+    No dry-run parameter exists (nothing to rehearse on a read-only surface), but test-mode keys
+    (api_test_) provide free rehearsal of every call against live data — see
+    ../sandbox/apitube-sandbox.yml.

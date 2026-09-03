@@ -1,0 +1,26 @@
+generated: '2026-09-03'
+method: searched
+source: https://github.com/apitube/news-api-skills
+note: >-
+  APITube publishes an OFFICIAL Agent Skill — a rare searched hit. The repo apitube/news-api-skills
+  ships skills/apitube-news-api/SKILL.md (saved verbatim here as apitube-news-api-skill.md) plus an
+  AGENTS.md (apitube-agents.md) and a Claude Code plugin marketplace manifest. Installable via
+  `npx skills add apitube/news-api-skills --skill apitube-news-api` or
+  `/plugin marketplace add apitube/news-api-skills`. The provider states every parameter, limit and
+  error code in the skill was executed against the live API before being written down, and that
+  where docs and API disagree the skill records the real behaviour.
+skills:
+- file: apitube-news-api-skill.md
+  name: apitube-news-api
+  api: apitube:apitube-news-api
+  official: true
+  source: https://raw.githubusercontent.com/apitube/news-api-skills/main/skills/apitube-news-api/SKILL.md
+  description: >-
+    Query the APITube News API — authenticate, search and filter worldwide news articles by
+    keyword, entity, sentiment, source, country and date, and parse the JSON response.
+  license: MIT
+- file: apitube-agents.md
+  name: AGENTS.md
+  official: true
+  source: https://raw.githubusercontent.com/apitube/news-api-skills/main/AGENTS.md
+  description: Provider guidance for AI agents editing the skill repository.

@@ -1,0 +1,23 @@
+generated: '2026-09-03'
+method: searched
+source: https://status.apitube.io/ + https://docs.apitube.io/platform/changelog.md
+status_page:
+  url: https://status.apitube.io/
+  probed: '2026-09-03'
+  http_status: 200
+versioning:
+  api_path_version: v1
+  platform_scheme: three-part platform version (1.0.x) with dated changelog entries
+  current_platform_version: 1.0.53
+  current_platform_date: '2026-09-01'
+deprecation_policy:
+  published: false
+  note: >-
+    No standalone deprecation or sunset policy page was found, and the API does not document
+    Sunset/Deprecation headers (RFC 8594). Breaking changes are announced in the dated changelog
+    with a "Breaking" marker (e.g. 1.0.48's 31-day title-search window), but with no stated
+    notice period. Recorded honestly — no Deprecation pointer is emitted.
+deprecated_operations: []
+sla:
+  published: false
+  note: The pricing comparison table shows a 99% uptime figure for paid tiers, but no formal SLA document was found.

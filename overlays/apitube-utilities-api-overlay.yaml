@@ -1,0 +1,23 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay — APITube News Utilities API
+  version: 1.0.0
+  x-generated: '2026-09-03'
+  x-method: generated
+  x-source: openapi/apitube-utilities-api-openapi.yml
+extends: ../openapi/apitube-utilities-api-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-apitube-enrichment:
+      documentation: https://docs.apitube.io
+      rate-limits: https://docs.apitube.io/platform/news-api/rate-limits
+      status-page: https://status.apitube.io/
+      error-catalog: ../errors/apitube-problem-types.yml
+      conventions: ../conventions/apitube-conventions.yml
+      authentication: ../authentication/apitube-authentication.yml
+- target: $
+  update:
+    externalDocs:
+      description: APITube News API documentation
+      url: https://docs.apitube.io

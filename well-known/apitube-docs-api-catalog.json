@@ -1,0 +1,28 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://api.apitube.io/v1",
+      "service-desc": [
+        {
+          "href": "https://api-reference.apitube.io/openapi.json",
+          "type": "application/vnd.oai.openapi+json;version=3.0",
+          "title": "APITube News API OpenAPI 3.0 specification"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.apitube.io/",
+          "type": "text/html",
+          "title": "APITube News API documentation"
+        }
+      ],
+      "service-meta": [
+        {
+          "href": "https://docs.apitube.io/platform/news-api/authentication",
+          "type": "text/html",
+          "title": "APITube News API authentication, rate limits and usage"
+        }
+      ]
+    }
+  ]
+}

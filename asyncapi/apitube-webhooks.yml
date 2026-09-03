@@ -1,0 +1,30 @@
+generated: '2026-09-03'
+method: searched
+source: https://docs.apitube.io/platform/news-api/webhooks.md + real-time.md + sse-stream.md + websocket-stream.md
+note: >-
+  APITube publishes no AsyncAPI document (probed apitube.io/asyncapi.json 404,
+  api.apitube.io/asyncapi.json 401-gated edge), but ships a real, well-documented event surface
+  with three delivery channels. Captured here as a webhook/streaming catalog; type: Webhooks.
+channels:
+- name: webhooks
+  kind: push (HTTP POST to a registered URL)
+  event: articles.new
+  management: dashboard only (https://dashboard.apitube.io/webhooks) — a webhook is a saved query with a destination, filtered with the same parameters as /v1/news/everything
+  payload: '{event: "articles.new", webhook_id, delivered_at, articles[]} — up to 100 articles per delivery, same article shape as /v1/news/everything'
+  security:
+    signature_header: 'X-Webhook-Signature: sha256=<hmac>'
+    scheme: HMAC-SHA256 over timestamp + "." + rawBody with a per-webhook signing secret shown once at creation
+  headers: [X-Webhook-Signature, X-Webhook-Id, X-Webhook-Delivery-Id, X-Webhook-Timestamp]
+  delivery: any 2xx acknowledges; non-2xx or 30s timeout schedules automatic retries with exponential backoff; full delivery logs in the dashboard
+  plan_limits: {Free: 1, Starter: 5, Basic: 5, Professional: 20, Corporate: 100}
+- name: sse-stream
+  kind: pull (Server-Sent Events)
+  endpoint: GET https://api.apitube.io/v1/news/stream
+  content_type: text/event-stream
+  filters: same parameters as /v1/news/everything
+  plan_limits: 'concurrent connections: Free 0 / Starter 2 / Basic 2 / Professional 10 / Corporate 50 (429 ER0360 beyond)'
+- name: websocket-stream
+  kind: pull (full-duplex WebSocket, typed message protocol)
+  endpoint: wss://api.apitube.io/v1/news/ws
+  filters: same parameters as /v1/news/everything; subscription adjustable without reopening the connection
+asyncapi_published: false

@@ -1,0 +1,52 @@
+generated: '2026-09-03'
+method: searched
+source: https://github.com/apitube + registry.npmjs.org + repo.packagist.org + pub.dev
+note: >-
+  First-party clients found on the apitube GitHub org and confirmed against the registries.
+  The unscoped npm package `apitube` (1.5.3, 2021) is a THIRD-PARTY YouTube Data API module by
+  BurnedBed and is deliberately excluded — it is not APITube's. The docs Tools page links an
+  official Python SDK at github.com/apitube/news-api-python, but that repo returns 404 and no
+  matching PyPI package was found (pypi.org/pypi/apitube and /apitube-news both 404) — recorded
+  as an honest gap, the pointer is the provider's to fix.
+packages:
+- name: '@apitube/news-api'
+  registry: npm
+  url: https://www.npmjs.com/package/@apitube/news-api
+  repository: https://github.com/apitube/news-api-node
+  language: TypeScript / Node.js
+  official: true
+  version: 1.2.0
+  published: '2026-05-29'
+  note: Official Node.js SDK. Version and date read from registry.npmjs.org/@apitube%2fnews-api.
+- name: apitube/news-api
+  registry: packagist
+  url: https://packagist.org/packages/apitube/news-api
+  repository: https://github.com/apitube/news-api-php
+  language: PHP
+  official: true
+  version: 1.2.0
+  published: '2026-05-29'
+  note: Official PHP client. Version and date read from repo.packagist.org/p2/apitube/news-api.json.
+- name: apitube
+  registry: none
+  url: https://github.com/apitube/news-api-dart
+  repository: https://github.com/apitube/news-api-dart
+  language: Dart / Flutter
+  official: true
+  version: null
+  published: null
+  note: >-
+    Official Dart/Flutter client exists on GitHub (pubspec.yaml declares name `apitube`,
+    version 1.0.0) but it is NOT published to pub.dev — pub.dev/api/packages/apitube returns
+    404 — so there is no registry metadata to date a release by. GitHub-only distribution.
+- name: news-api-python
+  registry: none
+  url: https://github.com/apitube/news-api-python
+  language: Python
+  official: true
+  version: null
+  published: null
+  note: >-
+    Claimed by the provider's docs Tools page as an official Python SDK, but the GitHub repo
+    returns 404 (probed 2026-09-03) and no PyPI package exists. A dead first-party pointer,
+    not a shipped SDK.
