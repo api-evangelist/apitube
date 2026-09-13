@@ -1,21 +1,25 @@
 generated: '2026-09-03'
 method: probed
-source: https://mcp.apitube.io/ (tools/list probed live 2026-09-03, HTTP 200 anonymous) + https://docs.apitube.io/platform/news-api/ai/mcp-server.md + https://github.com/apitube/news-api-mcp
+source: https://mcp.apitube.io/ (tools/list probed live 2026-09-03, HTTP 200 anonymous) + https://docs.apitube.io/platform/news-api/ai/mcp-server.md
+  + https://github.com/apitube/news-api-mcp
 name: APITube News MCP-Server
 status: official
-description: >-
-  First-party hosted MCP server for the APITube News API. Streamable HTTP JSON-RPC at
-  https://mcp.apitube.io/ — no package to install. Two tools (search_news, suggest) and four
-  ready-made prompts (monitor_company, topic_sentiment, breaking_news, compare_coverage).
-  tools/list answers anonymously with full inputSchemas (saved verbatim to
-  mcp/apitube-tools-list.json); tool calls require an API key as Authorization: Bearer.
-  Not available on the Free plan (403 ER0706). Per-key endpoint scopes, expiry and IP
-  allowlists are enforced at the MCP layer too.
+description: 'First-party hosted MCP server for the APITube News API. Streamable HTTP JSON-RPC at https://mcp.apitube.io/
+  — no package to install. Two tools (search_news, suggest) and four ready-made prompts (monitor_company,
+  topic_sentiment, breaking_news, compare_coverage). tools/list answers anonymously with full inputSchemas
+  (saved verbatim to mcp/apitube-tools-list.json); tool calls require an API key as Authorization: Bearer.
+  Not available on the Free plan (403 ER0706). Per-key endpoint scopes, expiry and IP allowlists are enforced
+  at the MCP layer too.'
 deployment:
   mode: remote
   endpoint: https://mcp.apitube.io/
   auth: api-key
   verified: probed
+  probe_prior: (never probed)
+  probe: live
+  probe_why: live
+  checked: '2026-09-11'
+  source: claimed-backlog re-probe 2026-09-11
 protocol:
   transport: streamable-http
   protocol_version: '2025-11-25'
@@ -26,9 +30,11 @@ protocol:
   - prompts
 tools:
 - name: search_news
-  description: Search news articles with the full News API filter set — keywords, language, country, source domain and rank, sentiment, entities, media, dates, sorting, faceting, highlighting.
+  description: Search news articles with the full News API filter set — keywords, language, country, source
+    domain and rank, sentiment, entities, media, dates, sorting, faceting, highlighting.
 - name: suggest
-  description: Resolve a name or prefix (e.g. "Tesla") to APITube taxonomy IDs — entity.id, category.id (IPTC medtop slugs), topic.id, industry.id — for precise search_news filters.
+  description: Resolve a name or prefix (e.g. "Tesla") to APITube taxonomy IDs — entity.id, category.id
+    (IPTC medtop slugs), topic.id, industry.id — for precise search_news filters.
 prompts:
 - name: monitor_company
   description: Coverage digest for a company
