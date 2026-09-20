@@ -24,6 +24,9 @@ deliveryModel:
 created: '2026-08-21'
 modified: '2026-09-03'
 specificationVersion: '0.23'
+x-docs-platform: vitepress
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-09-19
 tags:
 - News
 - Media Monitoring
