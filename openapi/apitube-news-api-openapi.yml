@@ -1931,6 +1931,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsEverything
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
       description: Production API server
@@ -3653,6 +3655,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsTopHeadlines
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
       description: Production API server
@@ -4255,6 +4259,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsTrends
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
       description: Production API server
@@ -4547,6 +4553,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsRaw
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
   /v1/news/local:
@@ -5904,6 +5912,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsLocal
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
   /v1/news/story/{articleId}:
@@ -7596,6 +7606,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsStoryByArticleId
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
   /v1/news/article:
@@ -9285,6 +9297,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsArticle
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
   /v1/news/category/{taxonomy}/{categoryId}:
@@ -10988,6 +11002,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsCategoryByTaxonomyByCategoryId
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
   /v1/news/topic/{topicId}:
@@ -12685,6 +12701,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsTopicByTopicId
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
   /v1/news/industry/{industryId}:
@@ -14382,6 +14400,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsIndustryByIndustryId
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
   /v1/news/entity/{entityId}:
@@ -16079,6 +16099,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsEntityByEntityId
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
   /v1/news/count:
@@ -17037,56 +17059,33 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: postV1NewsCount
+      x-operation-id-source: derived
     servers:
     - url: https://api.apitube.io
 components:
-  responses:
-    BadRequest:
-      description: Invalid request parameters
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    PaymentRequired:
-      description: Quota exhausted or plan upgrade required
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    TooManyRequests:
-      description: Rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    Unauthorized:
-      description: Missing or invalid API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            status: 401
-            code: unauthorized
-            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
   schemas:
-    NewsListResponse:
-      allOf:
-      - $ref: '#/components/schemas/Pagination'
-      - type: object
-        required:
-        - results
-        properties:
-          results:
-            type: array
-            items:
-              $ref: '#/components/schemas/Article'
-    Sentiment:
+    Entity:
       type: object
-      description: Sentiment analysis for the article
+      description: Named entity (person, organization, brand, location) mentioned in the article
       properties:
-        overall:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - human
+          - location
+          - organization
+          - brand
+        frequency:
+          type: integer
+          description: Number of times this entity is mentioned
+        sentiment:
           type: object
+          description: Sentiment expressed toward this entity, aggregated across its mentions
           properties:
             score:
               type: number
@@ -17099,99 +17098,28 @@ components:
               - positive
               - negative
               - neutral
-        title:
-          type: object
-          properties:
-            score:
-              type: number
-              format: float
-              minimum: -1
-              maximum: 1
-            polarity:
-              type: string
-              enum:
-              - positive
-              - negative
-              - neutral
-        body:
-          type: object
-          properties:
-            score:
-              type: number
-              format: float
-              minimum: -1
-              maximum: 1
-            polarity:
-              type: string
-              enum:
-              - positive
-              - negative
-              - neutral
-    Pagination:
-      type: object
-      properties:
-        status:
-          type: string
-          example: ok
-        limit:
-          type: integer
-        page:
-          type: integer
-        has_next_pages:
-          type: boolean
-        next_page:
-          type: string
-        has_previous_page:
-          type: boolean
-        previous_page:
-          type: string
-        path:
-          type: string
-        request_id:
-          type: string
-          format: uuid
-        export:
-          type: object
-          description: Export URLs for various formats
-          properties:
-            json:
-              type: string
-            xlsx:
-              type: string
-            csv:
-              type: string
-            tsv:
-              type: string
-            xml:
-              type: string
-            rss:
-              type: string
-            parquet:
-              type: string
-            jsonl:
-              type: string
-    ErrorResponse:
-      type: object
-      required:
-      - status
-      - code
-      - message
-      properties:
-        status:
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: Machine-readable error identifier
-        message:
-          type: string
-          description: Human-readable error description
+            mentions:
+              type: object
+              description: Per-mention polarity counts
+              properties:
+                positive:
+                  type: integer
+                neutral:
+                  type: integer
+                negative:
+                  type: integer
         links:
           type: object
           properties:
-            about:
+            self:
               type: string
-              description: Documentation URL for this error
+            wikipedia:
+              type: string
+            wikidata:
+              type: string
+        metadata:
+          type: object
+          description: Entity-type-specific metadata (varies by type)
     Article:
       type: object
       description: A news article object
@@ -17334,6 +17262,22 @@ components:
         characters_count:
           type: integer
           description: Total character count
+    Topic:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        score:
+          type: number
+          format: float
+          description: Confidence score (0–1)
+        links:
+          type: object
+          properties:
+            self:
+              type: string
     Industry:
       type: object
       properties:
@@ -17382,61 +17326,28 @@ components:
                       format: date
                     count:
                       type: integer
-    Entity:
+    ErrorResponse:
       type: object
-      description: Named entity (person, organization, brand, location) mentioned in the article
+      required:
+      - status
+      - code
+      - message
       properties:
-        id:
+        status:
           type: integer
-        name:
+          description: HTTP status code
+        code:
           type: string
-        type:
+          description: Machine-readable error identifier
+        message:
           type: string
-          enum:
-          - human
-          - location
-          - organization
-          - brand
-        frequency:
-          type: integer
-          description: Number of times this entity is mentioned
-        sentiment:
-          type: object
-          description: Sentiment expressed toward this entity, aggregated across its mentions
-          properties:
-            score:
-              type: number
-              format: float
-              minimum: -1
-              maximum: 1
-            polarity:
-              type: string
-              enum:
-              - positive
-              - negative
-              - neutral
-            mentions:
-              type: object
-              description: Per-mention polarity counts
-              properties:
-                positive:
-                  type: integer
-                neutral:
-                  type: integer
-                negative:
-                  type: integer
+          description: Human-readable error description
         links:
           type: object
           properties:
-            self:
+            about:
               type: string
-            wikipedia:
-              type: string
-            wikidata:
-              type: string
-        metadata:
-          type: object
-          description: Entity-type-specific metadata (varies by type)
+              description: Documentation URL for this error
     Category:
       type: object
       properties:
@@ -17455,6 +17366,106 @@ components:
           properties:
             self:
               type: string
+    Pagination:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        limit:
+          type: integer
+        page:
+          type: integer
+        has_next_pages:
+          type: boolean
+        next_page:
+          type: string
+        has_previous_page:
+          type: boolean
+        previous_page:
+          type: string
+        path:
+          type: string
+        request_id:
+          type: string
+          format: uuid
+        export:
+          type: object
+          description: Export URLs for various formats
+          properties:
+            json:
+              type: string
+            xlsx:
+              type: string
+            csv:
+              type: string
+            tsv:
+              type: string
+            xml:
+              type: string
+            rss:
+              type: string
+            parquet:
+              type: string
+            jsonl:
+              type: string
+    Sentiment:
+      type: object
+      description: Sentiment analysis for the article
+      properties:
+        overall:
+          type: object
+          properties:
+            score:
+              type: number
+              format: float
+              minimum: -1
+              maximum: 1
+            polarity:
+              type: string
+              enum:
+              - positive
+              - negative
+              - neutral
+        title:
+          type: object
+          properties:
+            score:
+              type: number
+              format: float
+              minimum: -1
+              maximum: 1
+            polarity:
+              type: string
+              enum:
+              - positive
+              - negative
+              - neutral
+        body:
+          type: object
+          properties:
+            score:
+              type: number
+              format: float
+              minimum: -1
+              maximum: 1
+            polarity:
+              type: string
+              enum:
+              - positive
+              - negative
+              - neutral
+    NewsListResponse:
+      allOf:
+      - $ref: '#/components/schemas/Pagination'
+      - type: object
+        required:
+        - results
+        properties:
+          results:
+            type: array
+            items:
+              $ref: '#/components/schemas/Article'
     Source:
       type: object
       description: News source / publisher information
@@ -17495,22 +17506,35 @@ components:
         favicon:
           type: string
           format: uri
-    Topic:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        score:
-          type: number
-          format: float
-          description: Confidence score (0–1)
-        links:
-          type: object
-          properties:
-            self:
-              type: string
+  responses:
+    TooManyRequests:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            code: unauthorized
+            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    PaymentRequired:
+      description: Quota exhausted or plan upgrade required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   securitySchemes:
     ApiKeyHeader:
       type: apiKey

@@ -22,7 +22,8 @@
     "apitube-api-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "apitube-api-openapi.json: declared missing tag: Reference",
     "tag 'Account' spans 2 source specs (apitube-apex-openapi.json, apitube-api-openapi.json): per-path servers applied",
-    "tag 'News' spans 2 source specs (apitube-apex-openapi.json, apitube-api-openapi.json): per-path servers applied"
+    "tag 'News' spans 2 source specs (apitube-apex-openapi.json, apitube-api-openapi.json): per-path servers applied",
+    "apis.yml register: already-registered"
   ],
   "skipped": [
     "apitube-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
@@ -30,6 +31,7 @@
     "apitube-news-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "apitube-reference-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "apitube-suggest-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "apitube-system-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+    "apitube-system-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "apitube-utilities-api-openapi.yml: previously refined output, superseded by openapi/_original/"
   ]
 }

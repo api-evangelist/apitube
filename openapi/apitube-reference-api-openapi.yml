@@ -3,39 +3,7 @@ info:
   title: APITube News Reference API
   version: 1.0.0
   summary: Search and filter news articles from thousands of sources worldwide.
-  description: 'APITube News API provides programmatic access to a comprehensive, real-time news database aggregated from thousands of sources worldwide. Use it to search, filter, and retrieve news articles with advanced query capabilities.
-
-
-    ## Key Endpoints
-
-
-    - **Everything** (`/v1/news/everything`) — full-text search across all indexed articles with filters by title, date range, language, country, source, sentiment, category, topic, industry, and named entities (people, organizations, locations, brands, etc.).
-
-    - **Top Headlines** (`/v1/news/top-headlines`) — breaking and trending news from high-authority sources ranked by OPR score.
-
-    - **Story** (`/v1/news/story/{articleId}`) — retrieve related articles for a given story.
-
-    - **Article** (`/v1/news/article`) — fetch one or more articles by ID.
-
-    - **Dictionaries** — list available categories, topics, industries, and entities.
-
-    - **Trends** — discover trending topics and entities over time.
-
-    - **Stream** (`/v1/news/stream`) — real-time Server-Sent Events (SSE) stream of new articles.
-
-    - **Webhooks** — subscribe to push notifications for new articles matching your filters.
-
-
-    ## Export Formats
-
-
-    JSON (default), CSV, TSV, XML, RSS, XLSX, Parquet, JSONL, and NDJSON.
-
-
-    ## Authentication
-
-
-    All requests require an API key passed via the `X-API-Key` header or the `api_key` query parameter.'
+  description: APITube News API provides programmatic access to a comprehensive, real-time news database aggregated from thousands of sources worldwide.
   contact:
     name: APITube Support
     url: https://apitube.io
@@ -150,6 +118,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: getV1NewsEventTypes
+      x-operation-id-source: derived
   /v1/people:
     get:
       summary: List & search people
@@ -290,6 +260,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: getV1People
+      x-operation-id-source: derived
   /v1/people/{id}:
     get:
       summary: Get a person profile
@@ -1097,6 +1069,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: getV1PeopleById
+      x-operation-id-source: derived
   /v1/companies:
     get:
       summary: List & search companies
@@ -1237,6 +1211,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: getV1Companies
+      x-operation-id-source: derived
   /v1/companies/{id}:
     get:
       summary: Get a company profile
@@ -2044,6 +2020,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: getV1CompaniesById
+      x-operation-id-source: derived
   /v1/journalists:
     get:
       summary: List & search journalists
@@ -2172,6 +2150,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: getV1Journalists
+      x-operation-id-source: derived
   /v1/journalists/{id}:
     get:
       summary: Get a journalist profile
@@ -2960,6 +2940,8 @@ paths:
                   links:
                     about: https://docs.apitube.io/platform/news-api/http-response-codes
                   timestamp: '2026-03-23T14:30:00Z'
+      operationId: getV1JournalistsById
+      x-operation-id-source: derived
 components:
   securitySchemes:
     ApiKeyHeader:

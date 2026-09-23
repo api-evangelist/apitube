@@ -42,29 +42,18 @@ paths:
     - url: https://api.apitube.io
       description: Production API server
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            code: unauthorized
+            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
   schemas:
-    BalanceResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          example: ok
-        plan:
-          type: string
-          example: professional
-        requests:
-          type: object
-          properties:
-            used:
-              type: integer
-            limit:
-              type: integer
-            remaining:
-              type: integer
-        reset_at:
-          type: string
-          format: date-time
-          description: When the quota resets
     ErrorResponse:
       type: object
       required:
@@ -87,17 +76,28 @@ components:
             about:
               type: string
               description: Documentation URL for this error
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            status: 401
-            code: unauthorized
-            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
+    BalanceResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        plan:
+          type: string
+          example: professional
+        requests:
+          type: object
+          properties:
+            used:
+              type: integer
+            limit:
+              type: integer
+            remaining:
+              type: integer
+        reset_at:
+          type: string
+          format: date-time
+          description: When the quota resets
   securitySchemes:
     ApiKeyHeader:
       type: apiKey

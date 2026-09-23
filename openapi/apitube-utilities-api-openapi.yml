@@ -65,6 +65,23 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            code: unauthorized
+            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
     EntitySuggestResponse:
       type: object
@@ -110,23 +127,6 @@ components:
             about:
               type: string
               description: Documentation URL for this error
-  responses:
-    BadRequest:
-      description: Invalid request parameters
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    Unauthorized:
-      description: Missing or invalid API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            status: 401
-            code: unauthorized
-            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
   securitySchemes:
     ApiKeyHeader:
       type: apiKey
