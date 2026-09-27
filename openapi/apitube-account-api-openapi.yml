@@ -54,28 +54,6 @@ components:
             code: unauthorized
             message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
   schemas:
-    ErrorResponse:
-      type: object
-      required:
-      - status
-      - code
-      - message
-      properties:
-        status:
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: Machine-readable error identifier
-        message:
-          type: string
-          description: Human-readable error description
-        links:
-          type: object
-          properties:
-            about:
-              type: string
-              description: Documentation URL for this error
     BalanceResponse:
       type: object
       properties:
@@ -98,6 +76,28 @@ components:
           type: string
           format: date-time
           description: When the quota resets
+    ErrorResponse:
+      type: object
+      required:
+      - status
+      - code
+      - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Machine-readable error identifier
+        message:
+          type: string
+          description: Human-readable error description
+        links:
+          type: object
+          properties:
+            about:
+              type: string
+              description: Documentation URL for this error
   securitySchemes:
     ApiKeyHeader:
       type: apiKey
