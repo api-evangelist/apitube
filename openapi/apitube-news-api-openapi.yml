@@ -17065,12 +17065,61 @@ paths:
     - url: https://api.apitube.io
 components:
   schemas:
-    Industry:
+    Pagination:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        limit:
+          type: integer
+        page:
+          type: integer
+        has_next_pages:
+          type: boolean
+        next_page:
+          type: string
+        has_previous_page:
+          type: boolean
+        previous_page:
+          type: string
+        path:
+          type: string
+        request_id:
+          type: string
+          format: uuid
+        export:
+          type: object
+          description: Export URLs for various formats
+          properties:
+            json:
+              type: string
+            xlsx:
+              type: string
+            csv:
+              type: string
+            tsv:
+              type: string
+            xml:
+              type: string
+            rss:
+              type: string
+            parquet:
+              type: string
+            jsonl:
+              type: string
+    Category:
       type: object
       properties:
         id:
-          type: integer
+          type: string
         name:
+          type: string
+        score:
+          type: number
+          format: float
+          description: Confidence score (0–1)
+        taxonomy:
           type: string
         links:
           type: object
@@ -17219,6 +17268,96 @@ components:
         characters_count:
           type: integer
           description: Total character count
+    ErrorResponse:
+      type: object
+      required:
+      - status
+      - code
+      - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Machine-readable error identifier
+        message:
+          type: string
+          description: Human-readable error description
+        links:
+          type: object
+          properties:
+            about:
+              type: string
+              description: Documentation URL for this error
+    Topic:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        score:
+          type: number
+          format: float
+          description: Confidence score (0–1)
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+    Industry:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+    Source:
+      type: object
+      description: News source / publisher information
+      properties:
+        id:
+          type: integer
+        domain:
+          type: string
+          example: techcrunch.com
+        home_page_url:
+          type: string
+          format: uri
+        type:
+          type: string
+          enum:
+          - news
+          - blog
+        bias:
+          type: string
+          enum:
+          - left
+          - center
+          - right
+        rankings:
+          type: object
+          properties:
+            opr:
+              type: integer
+              description: Open Page Rank (0–7)
+        location:
+          type: object
+          properties:
+            country_name:
+              type: string
+            country_code:
+              type: string
+              description: ISO 3166-1 alpha-2
+        favicon:
+          type: string
+          format: uri
     Sentiment:
       type: object
       description: Sentiment analysis for the article
@@ -17301,68 +17440,6 @@ components:
                       format: date
                     count:
                       type: integer
-    ErrorResponse:
-      type: object
-      required:
-      - status
-      - code
-      - message
-      properties:
-        status:
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: Machine-readable error identifier
-        message:
-          type: string
-          description: Human-readable error description
-        links:
-          type: object
-          properties:
-            about:
-              type: string
-              description: Documentation URL for this error
-    Source:
-      type: object
-      description: News source / publisher information
-      properties:
-        id:
-          type: integer
-        domain:
-          type: string
-          example: techcrunch.com
-        home_page_url:
-          type: string
-          format: uri
-        type:
-          type: string
-          enum:
-          - news
-          - blog
-        bias:
-          type: string
-          enum:
-          - left
-          - center
-          - right
-        rankings:
-          type: object
-          properties:
-            opr:
-              type: integer
-              description: Open Page Rank (0–7)
-        location:
-          type: object
-          properties:
-            country_name:
-              type: string
-            country_code:
-              type: string
-              description: ISO 3166-1 alpha-2
-        favicon:
-          type: string
-          format: uri
     Entity:
       type: object
       description: Named entity (person, organization, brand, location) mentioned in the article
@@ -17418,83 +17495,6 @@ components:
         metadata:
           type: object
           description: Entity-type-specific metadata (varies by type)
-    Topic:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        score:
-          type: number
-          format: float
-          description: Confidence score (0–1)
-        links:
-          type: object
-          properties:
-            self:
-              type: string
-    Pagination:
-      type: object
-      properties:
-        status:
-          type: string
-          example: ok
-        limit:
-          type: integer
-        page:
-          type: integer
-        has_next_pages:
-          type: boolean
-        next_page:
-          type: string
-        has_previous_page:
-          type: boolean
-        previous_page:
-          type: string
-        path:
-          type: string
-        request_id:
-          type: string
-          format: uuid
-        export:
-          type: object
-          description: Export URLs for various formats
-          properties:
-            json:
-              type: string
-            xlsx:
-              type: string
-            csv:
-              type: string
-            tsv:
-              type: string
-            xml:
-              type: string
-            rss:
-              type: string
-            parquet:
-              type: string
-            jsonl:
-              type: string
-    Category:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        score:
-          type: number
-          format: float
-          description: Confidence score (0–1)
-        taxonomy:
-          type: string
-        links:
-          type: object
-          properties:
-            self:
-              type: string
     NewsListResponse:
       allOf:
       - $ref: '#/components/schemas/Pagination'
@@ -17507,24 +17507,6 @@ components:
             items:
               $ref: '#/components/schemas/Article'
   responses:
-    PaymentRequired:
-      description: Quota exhausted or plan upgrade required
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    TooManyRequests:
-      description: Rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    BadRequest:
-      description: Invalid request parameters
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: Missing or invalid API key
       content:
@@ -17535,6 +17517,24 @@ components:
             status: 401
             code: unauthorized
             message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
+    TooManyRequests:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    PaymentRequired:
+      description: Quota exhausted or plan upgrade required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   securitySchemes:
     ApiKeyHeader:
       type: apiKey

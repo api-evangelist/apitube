@@ -66,28 +66,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      required:
-      - status
-      - code
-      - message
-      properties:
-        status:
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: Machine-readable error identifier
-        message:
-          type: string
-          description: Human-readable error description
-        links:
-          type: object
-          properties:
-            about:
-              type: string
-              description: Documentation URL for this error
     EntitySuggestResponse:
       type: object
       properties:
@@ -110,6 +88,28 @@ components:
                 - organization
                 - brand
                 - location
+    ErrorResponse:
+      type: object
+      required:
+      - status
+      - code
+      - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Machine-readable error identifier
+        message:
+          type: string
+          description: Human-readable error description
+        links:
+          type: object
+          properties:
+            about:
+              type: string
+              description: Documentation URL for this error
   responses:
     BadRequest:
       description: Invalid request parameters
