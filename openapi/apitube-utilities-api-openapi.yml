@@ -66,28 +66,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    EntitySuggestResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          example: ok
-        results:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              type:
-                type: string
-                enum:
-                - human
-                - organization
-                - brand
-                - location
     ErrorResponse:
       type: object
       required:
@@ -110,6 +88,28 @@ components:
             about:
               type: string
               description: Documentation URL for this error
+    EntitySuggestResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                - human
+                - organization
+                - brand
+                - location
   responses:
     BadRequest:
       description: Invalid request parameters

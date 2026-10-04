@@ -17065,49 +17065,107 @@ paths:
     - url: https://api.apitube.io
 components:
   schemas:
-    Pagination:
+    Entity:
       type: object
+      description: Named entity (person, organization, brand, location) mentioned in the article
       properties:
-        status:
-          type: string
-          example: ok
-        limit:
+        id:
           type: integer
-        page:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - human
+          - location
+          - organization
+          - brand
+        frequency:
           type: integer
-        has_next_pages:
-          type: boolean
-        next_page:
-          type: string
-        has_previous_page:
-          type: boolean
-        previous_page:
-          type: string
-        path:
-          type: string
-        request_id:
-          type: string
-          format: uuid
-        export:
+          description: Number of times this entity is mentioned
+        sentiment:
           type: object
-          description: Export URLs for various formats
+          description: Sentiment expressed toward this entity, aggregated across its mentions
           properties:
-            json:
+            score:
+              type: number
+              format: float
+              minimum: -1
+              maximum: 1
+            polarity:
               type: string
-            xlsx:
+              enum:
+              - positive
+              - negative
+              - neutral
+            mentions:
+              type: object
+              description: Per-mention polarity counts
+              properties:
+                positive:
+                  type: integer
+                neutral:
+                  type: integer
+                negative:
+                  type: integer
+        links:
+          type: object
+          properties:
+            self:
               type: string
-            csv:
+            wikipedia:
               type: string
-            tsv:
+            wikidata:
               type: string
-            xml:
+        metadata:
+          type: object
+          description: Entity-type-specific metadata (varies by type)
+    Sentiment:
+      type: object
+      description: Sentiment analysis for the article
+      properties:
+        overall:
+          type: object
+          properties:
+            score:
+              type: number
+              format: float
+              minimum: -1
+              maximum: 1
+            polarity:
               type: string
-            rss:
+              enum:
+              - positive
+              - negative
+              - neutral
+        title:
+          type: object
+          properties:
+            score:
+              type: number
+              format: float
+              minimum: -1
+              maximum: 1
+            polarity:
               type: string
-            parquet:
+              enum:
+              - positive
+              - negative
+              - neutral
+        body:
+          type: object
+          properties:
+            score:
+              type: number
+              format: float
+              minimum: -1
+              maximum: 1
+            polarity:
               type: string
-            jsonl:
-              type: string
+              enum:
+              - positive
+              - negative
+              - neutral
     Category:
       type: object
       properties:
@@ -17126,6 +17184,53 @@ components:
           properties:
             self:
               type: string
+    NewsListResponse:
+      allOf:
+      - $ref: '#/components/schemas/Pagination'
+      - type: object
+        required:
+        - results
+        properties:
+          results:
+            type: array
+            items:
+              $ref: '#/components/schemas/Article'
+    TrendsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        request_id:
+          type: string
+          format: uuid
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              count:
+                type: integer
+              growth_rate:
+                type: number
+                format: float
+              trending_score:
+                type: number
+                format: float
+              history:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+                    count:
+                      type: integer
     Article:
       type: object
       description: A news article object
@@ -17268,56 +17373,6 @@ components:
         characters_count:
           type: integer
           description: Total character count
-    ErrorResponse:
-      type: object
-      required:
-      - status
-      - code
-      - message
-      properties:
-        status:
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: Machine-readable error identifier
-        message:
-          type: string
-          description: Human-readable error description
-        links:
-          type: object
-          properties:
-            about:
-              type: string
-              description: Documentation URL for this error
-    Topic:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        score:
-          type: number
-          format: float
-          description: Confidence score (0–1)
-        links:
-          type: object
-          properties:
-            self:
-              type: string
-    Industry:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        links:
-          type: object
-          properties:
-            self:
-              type: string
     Source:
       type: object
       description: News source / publisher information
@@ -17358,171 +17413,100 @@ components:
         favicon:
           type: string
           format: uri
-    Sentiment:
+    Industry:
       type: object
-      description: Sentiment analysis for the article
-      properties:
-        overall:
-          type: object
-          properties:
-            score:
-              type: number
-              format: float
-              minimum: -1
-              maximum: 1
-            polarity:
-              type: string
-              enum:
-              - positive
-              - negative
-              - neutral
-        title:
-          type: object
-          properties:
-            score:
-              type: number
-              format: float
-              minimum: -1
-              maximum: 1
-            polarity:
-              type: string
-              enum:
-              - positive
-              - negative
-              - neutral
-        body:
-          type: object
-          properties:
-            score:
-              type: number
-              format: float
-              minimum: -1
-              maximum: 1
-            polarity:
-              type: string
-              enum:
-              - positive
-              - negative
-              - neutral
-    TrendsResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          example: ok
-        request_id:
-          type: string
-          format: uuid
-        results:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              count:
-                type: integer
-              growth_rate:
-                type: number
-                format: float
-              trending_score:
-                type: number
-                format: float
-              history:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    date:
-                      type: string
-                      format: date
-                    count:
-                      type: integer
-    Entity:
-      type: object
-      description: Named entity (person, organization, brand, location) mentioned in the article
       properties:
         id:
           type: integer
         name:
           type: string
-        type:
-          type: string
-          enum:
-          - human
-          - location
-          - organization
-          - brand
-        frequency:
-          type: integer
-          description: Number of times this entity is mentioned
-        sentiment:
-          type: object
-          description: Sentiment expressed toward this entity, aggregated across its mentions
-          properties:
-            score:
-              type: number
-              format: float
-              minimum: -1
-              maximum: 1
-            polarity:
-              type: string
-              enum:
-              - positive
-              - negative
-              - neutral
-            mentions:
-              type: object
-              description: Per-mention polarity counts
-              properties:
-                positive:
-                  type: integer
-                neutral:
-                  type: integer
-                negative:
-                  type: integer
         links:
           type: object
           properties:
             self:
               type: string
-            wikipedia:
-              type: string
-            wikidata:
-              type: string
-        metadata:
+    Topic:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        score:
+          type: number
+          format: float
+          description: Confidence score (0–1)
+        links:
           type: object
-          description: Entity-type-specific metadata (varies by type)
-    NewsListResponse:
-      allOf:
-      - $ref: '#/components/schemas/Pagination'
-      - type: object
-        required:
-        - results
-        properties:
-          results:
-            type: array
-            items:
-              $ref: '#/components/schemas/Article'
+          properties:
+            self:
+              type: string
+    ErrorResponse:
+      type: object
+      required:
+      - status
+      - code
+      - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Machine-readable error identifier
+        message:
+          type: string
+          description: Human-readable error description
+        links:
+          type: object
+          properties:
+            about:
+              type: string
+              description: Documentation URL for this error
+    Pagination:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        limit:
+          type: integer
+        page:
+          type: integer
+        has_next_pages:
+          type: boolean
+        next_page:
+          type: string
+        has_previous_page:
+          type: boolean
+        previous_page:
+          type: string
+        path:
+          type: string
+        request_id:
+          type: string
+          format: uuid
+        export:
+          type: object
+          description: Export URLs for various formats
+          properties:
+            json:
+              type: string
+            xlsx:
+              type: string
+            csv:
+              type: string
+            tsv:
+              type: string
+            xml:
+              type: string
+            rss:
+              type: string
+            parquet:
+              type: string
+            jsonl:
+              type: string
   responses:
-    Unauthorized:
-      description: Missing or invalid API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            status: 401
-            code: unauthorized
-            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
-    TooManyRequests:
-      description: Rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
     PaymentRequired:
       description: Quota exhausted or plan upgrade required
       content:
@@ -17535,6 +17519,22 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            code: unauthorized
+            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
   securitySchemes:
     ApiKeyHeader:
       type: apiKey

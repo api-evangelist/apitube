@@ -42,17 +42,6 @@ paths:
     - url: https://api.apitube.io
       description: Production API server
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            status: 401
-            code: unauthorized
-            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
   schemas:
     ErrorResponse:
       type: object
@@ -98,6 +87,17 @@ components:
           type: string
           format: date-time
           description: When the quota resets
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            code: unauthorized
+            message: Invalid or missing API key. Provide it via X-API-Key header or api_key query parameter.
   securitySchemes:
     ApiKeyHeader:
       type: apiKey
