@@ -1,0 +1,12 @@
+{
+ "url": "https://apitube.io/openapi.json",
+ "requested_url": "https://apitube.io/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 39097,
+ "sha256": "c67b63057dce4fa420ec126e49374963ad2f9d03a4fe7cece30e3d5223d20a95",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
