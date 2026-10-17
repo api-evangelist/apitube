@@ -17065,61 +17065,6 @@ paths:
     - url: https://api.apitube.io
 components:
   schemas:
-    Entity:
-      type: object
-      description: Named entity (person, organization, brand, location) mentioned in the article
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        type:
-          type: string
-          enum:
-          - human
-          - location
-          - organization
-          - brand
-        frequency:
-          type: integer
-          description: Number of times this entity is mentioned
-        sentiment:
-          type: object
-          description: Sentiment expressed toward this entity, aggregated across its mentions
-          properties:
-            score:
-              type: number
-              format: float
-              minimum: -1
-              maximum: 1
-            polarity:
-              type: string
-              enum:
-              - positive
-              - negative
-              - neutral
-            mentions:
-              type: object
-              description: Per-mention polarity counts
-              properties:
-                positive:
-                  type: integer
-                neutral:
-                  type: integer
-                negative:
-                  type: integer
-        links:
-          type: object
-          properties:
-            self:
-              type: string
-            wikipedia:
-              type: string
-            wikidata:
-              type: string
-        metadata:
-          type: object
-          description: Entity-type-specific metadata (varies by type)
     Sentiment:
       type: object
       description: Sentiment analysis for the article
@@ -17184,17 +17129,6 @@ components:
           properties:
             self:
               type: string
-    NewsListResponse:
-      allOf:
-      - $ref: '#/components/schemas/Pagination'
-      - type: object
-        required:
-        - results
-        properties:
-          results:
-            type: array
-            items:
-              $ref: '#/components/schemas/Article'
     TrendsResponse:
       type: object
       properties:
@@ -17231,6 +17165,61 @@ components:
                       format: date
                     count:
                       type: integer
+    Entity:
+      type: object
+      description: Named entity (person, organization, brand, location) mentioned in the article
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - human
+          - location
+          - organization
+          - brand
+        frequency:
+          type: integer
+          description: Number of times this entity is mentioned
+        sentiment:
+          type: object
+          description: Sentiment expressed toward this entity, aggregated across its mentions
+          properties:
+            score:
+              type: number
+              format: float
+              minimum: -1
+              maximum: 1
+            polarity:
+              type: string
+              enum:
+              - positive
+              - negative
+              - neutral
+            mentions:
+              type: object
+              description: Per-mention polarity counts
+              properties:
+                positive:
+                  type: integer
+                neutral:
+                  type: integer
+                negative:
+                  type: integer
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+            wikipedia:
+              type: string
+            wikidata:
+              type: string
+        metadata:
+          type: object
+          description: Entity-type-specific metadata (varies by type)
     Article:
       type: object
       description: A news article object
@@ -17373,6 +17362,39 @@ components:
         characters_count:
           type: integer
           description: Total character count
+    ErrorResponse:
+      type: object
+      required:
+      - status
+      - code
+      - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Machine-readable error identifier
+        message:
+          type: string
+          description: Human-readable error description
+        links:
+          type: object
+          properties:
+            about:
+              type: string
+              description: Documentation URL for this error
+    NewsListResponse:
+      allOf:
+      - $ref: '#/components/schemas/Pagination'
+      - type: object
+        required:
+        - results
+        properties:
+          results:
+            type: array
+            items:
+              $ref: '#/components/schemas/Article'
     Source:
       type: object
       description: News source / publisher information
@@ -17413,18 +17435,6 @@ components:
         favicon:
           type: string
           format: uri
-    Industry:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        links:
-          type: object
-          properties:
-            self:
-              type: string
     Topic:
       type: object
       properties:
@@ -17441,28 +17451,18 @@ components:
           properties:
             self:
               type: string
-    ErrorResponse:
+    Industry:
       type: object
-      required:
-      - status
-      - code
-      - message
       properties:
-        status:
+        id:
           type: integer
-          description: HTTP status code
-        code:
+        name:
           type: string
-          description: Machine-readable error identifier
-        message:
-          type: string
-          description: Human-readable error description
         links:
           type: object
           properties:
-            about:
+            self:
               type: string
-              description: Documentation URL for this error
     Pagination:
       type: object
       properties:
@@ -17507,8 +17507,8 @@ components:
             jsonl:
               type: string
   responses:
-    PaymentRequired:
-      description: Quota exhausted or plan upgrade required
+    TooManyRequests:
+      description: Rate limit exceeded
       content:
         application/json:
           schema:
@@ -17519,8 +17519,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    TooManyRequests:
-      description: Rate limit exceeded
+    PaymentRequired:
+      description: Quota exhausted or plan upgrade required
       content:
         application/json:
           schema:
