@@ -52,3 +52,30 @@ x-evidence:
   url: https://mcp.apitube.io/
   http_status: 200
   note: POST tools/list returned 2 tools with full inputSchemas, no authentication required.
+tool_quality:
+  tool_count: 2
+  tokens_total: 5737
+  tokens_per_tool_median: 2868
+  heavy_tools:
+  - name: search_news
+    tokens: 5379
+  heavy_tool_count: 1
+  params_total: 40
+  params_undescribed: 11
+  params_described_pct: 72.5
+  tools_with_undescribed_params: 1
+  tools_annotated: 2
+  annotated_pct: 100.0
+  state_changing_unhinted: []
+  tools_missing_schema: 0
+  short_descriptions: 0
+  duplicate_descriptions: 0
+  duplicate_names: 0
+  nonportable_names: []
+  output_schema_count: 0
+  token_estimate: chars/3.6 of each compact tool definition
+  source: mcp/apitube-tools-list.json
+  measured: '2026-10-20'
+  scored: false
+  note: Facts from the saved tools/list capture (mcp_tool_quality.py); recorded, not scored. Checks learned
+    from Glimind's agent-readiness audit.
