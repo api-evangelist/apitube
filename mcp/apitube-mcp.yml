@@ -30,11 +30,117 @@ protocol:
   - prompts
 tools:
 - name: search_news
-  description: Search news articles with the full News API filter set — keywords, language, country, source
-    domain and rank, sentiment, entities, media, dates, sorting, faceting, highlighting.
+  description: "Search news articles using APITube News API with comprehensive filtering.\n\nIMPORTANT\
+    \ INSTRUCTIONS FOR QUERY CONSTRUCTION:\n1. DO NOT use dots in parameter names directly in the root\
+    \ object. Use nested objects instead.\n2. The system will automatically convert nested objects to\
+    \ dot notation for the API.\n   Example: Use { language: { code: \"en\" } } instead of { \"language.code\"\
+    : \"en\" }.\n3. For multiple values in one parameter, use COMMA separation (e.g., \"en,ru,fr\" for\
+    \ multiple languages).\n4. Integer filters (has_*, is_*) accept ONLY 0 or 1 (e.g., has_image=1, is_duplicate=0).\n\
+    5. Date format: ISO 8601 (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ).\n6. Sentiment scores range: -1.0 (negative)\
+    \ to 1.0 (positive).\n7. Default sorting: published_at DESC (newest first).\n8. Unknown parameters\
+    \ are rejected with an error (-32602) instead of being silently ignored — check the\n   spelling against\
+    \ the list below.\n9. By default the response returns id, title, href, published_at, description and\
+    \ source.domain.\n   The article body is NOT included — request it explicitly with fl (e.g. fl: \"\
+    title,href,body\").\n\nAVAILABLE PARAMETERS:\n\n### Content Search\n- title: Search by article title\
+    \ (supports up to 3 keywords with comma separation)\n  IMPORTANT: a title search covers at most a\
+    \ 31-day published_at window. Omit the dates and the\n  last 31 days are searched; pass a range wider\
+    \ than 31 days and the call fails with 400 ER0110.\n  To cover a longer period, make one call per\
+    \ month-sized window.\n- ignore: { title: \"keyword\" } - Exclude articles with specific titles\n\n\
+    ### Languages (60+ supported)\n- language: { code: \"en,ru,fr\" } - Filter by language codes (up to\
+    \ 3)\n- ignore: { language: { code: \"fr\" } } - Exclude specific languages\n\n### Categories (IPTC\
+    \ taxonomy)\n- category: { id: \"medtop:04000000\" } - Filter by category ID (up to 3)\n- ignore:\
+    \ { category: { id: \"315\" } } - Exclude categories\n\n### Topics\n- topic: { id: \"crypto_news,climate_change\"\
+    \ } - Filter by topic ID (up to 3)\n- ignore: { topic: { id: \"2\" } } - Exclude topics\n\n### Industries\n\
+    - industry: { id: \"246771,246772\" } - Filter by industry ID (up to 3)\n- ignore: { industry: { id:\
+    \ \"246772\" } } - Exclude industries\n\n### Entities\n- entity: { id: \"1278268,1282301\" } - Filter\
+    \ by entity ID (up to 3)\n- ignore: { entity: { id: \"315\" } } - Exclude entities\n\n### Persons\n\
+    - person: { name: \"Elon Musk,Tim Cook\" } - Filter by person name (up to 3)\n- ignore: { person:\
+    \ { name: \"John Doe\" } } - Exclude persons\n\n### Locations\n- location: { name: \"Tokyo,New York\"\
+    \ } - Filter by location (up to 3)\n- ignore: { location: { name: \"Paris\" } } - Exclude locations\n\
+    \n### Organizations\n- organization: { name: \"Tesla,Apple,Google\" } - Filter by organization (up\
+    \ to 3)\n- ignore: { organization: { name: \"Microsoft\" } } - Exclude organizations\n\n### Disasters\n\
+    - disaster: { name: \"Earthquake,Tsunami\" } - Filter by disaster type (up to 3)\n- ignore: { disaster:\
+    \ { name: \"Flood\" } } - Exclude disasters\n\n### Diseases\n- disease: { name: \"COVID-19,Influenza\"\
+    \ } - Filter by disease (up to 3)\n- ignore: { disease: { name: \"Flu\" } } - Exclude diseases\n\n\
+    ### Events\n- event: { name: \"Olympics,World Cup\" } - Filter by event (up to 3)\n- ignore: { event:\
+    \ { name: \"Super Bowl\" } } - Exclude events\n\n### Brands\n- brand: { name: \"Nike,Adidas\" } -\
+    \ Filter by brand (up to 3)\n- ignore: { brand: { name: \"Puma\" } } - Exclude brands\n\n### Authors\n\
+    - author: { id: \"123,456\" } - Filter by author ID (up to 3)\n- author: { name: \"John Doe,Jane Smith\"\
+    \ } - Filter by author name (up to 3)\n- ignore: { author: { id: \"789\" } } - Exclude author IDs\n\
+    - ignore: { author: { name: \"Bob Jones\" } } - Exclude author names\n- has_author: 1 - Articles with\
+    \ attributed authors (0 for without)\n\n### Sentiment Analysis\n- sentiment: { overall: { score: {\
+    \ min: 0.5, max: 1.0 } } } - Sentiment score range\n- sentiment: { overall: { polarity: \"positive\"\
+    \ | \"negative\" | \"neutral\" } } - Sentiment polarity\n- sentiment: { title: { score: { min: -1.0,\
+    \ max: 1.0 } } } - Title sentiment\n- sentiment: { body: { score: { min: -1.0, max: 1.0 } } } - Body\
+    \ sentiment\n- sentiment: { mixed: 1 } - Articles with mixed sentiment (title/body differ)\n- sentiment:\
+    \ { consistent: 1 } - Articles with consistent sentiment\n\n### Media Content\n- media: { images:\
+    \ { count: { min: 2, max: 10 } } } - Filter by image count\n- media: { videos: { count: { min: 1 }\
+    \ } } - Filter by video count\n- media: { images: { width: { min: 1200, max: 1920 } } } - Filter by\
+    \ image width\n- media: { images: { height: { min: 800, max: 1080 } } } - Filter by image height\n\
+    - has_image: 1 - Articles with at least one image\n- has_video: 1 - Articles with at least one video\n\
+    - has_hq_images: 1 - Articles with high-quality images (width >= 1200px)\n- is_media_rich: 1 - Articles\
+    \ with both images and videos\n\n### Source Filtering\n- source: { id: \"314,315\" } - Filter by source\
+    \ ID (up to 3)\n- source: { domain: \"cnn.com,bbc.com\" } - Filter by domain (up to 3)\n- source:\
+    \ { country: { code: \"us,uk,de\" } } - Filter by country (up to 3)\n- source: { rank: { opr: { min:\
+    \ 0.5, max: 0.9 } } } - OpenPageRank range (0-7)\n- source: { bias: \"left,center,right\" } - Filter\
+    \ by media bias (up to 3)\n- ignore: { source: { id: \"315\" } } - Exclude source IDs\n- ignore: {\
+    \ source: { domain: \"example.com\" } } - Exclude domains\n- ignore: { source: { country: { code:\
+    \ \"fr\" } } } - Exclude countries\n- ignore: { source: { bias: \"left\" } } - Exclude biases\n- is_premium_source:\
+    \ 1 - Premium sources (OPR >= 6)\n- is_verified_source: 1 - Verified sources (OPR >= 5, not duplicates)\n\
+    \n### Date/Time Filtering\n- published_at: { start: \"2024-01-01\", end: \"2024-01-31\" } - Date range\n\
+    - published_at: \"2024-09-26\" - Specific date\n- Supported formats: YYYY-MM-DD, YYYY-MM-DDTHH:MM:SSZ,\
+    \ DD-MM-YYYY, RFC3339\n- Max 31 days between start and end WHEN the same call also searches titles\
+    \ (title, ignore.title\n  patterns or query); a wider range returns 400 ER0110. Without a title filter\
+    \ the range is unlimited.\n- An open-ended start ({ start: \"2024-01-01\" } with no end) runs to the\
+    \ current time, so with a title\n  filter it exceeds the window too — always pair an archive start\
+    \ with an end date.\n\n### Sorting\n- sort: { by: \"published_at\" | \"created_at\" | \"source.rank.opr\"\
+    \ | \"read_time\" |\n         \"sentiment.overall.score\" | \"sentiment.title.score\" | \"sentiment.body.score\"\
+    \ |\n         \"media.images.count\" | \"media.videos.count\" | \"media.images.width.min\" |\n   \
+    \      \"media.images.width.max\" | \"media.images.height.min\" | \"media.images.height.max\" |\n\
+    \         \"media_richness\" | \"relevance\" | \"engagement\" | \"quality\" | \"controversy\" | \"\
+    trust\" }\n- sort: { order: \"asc\" | \"desc\" }\n- Advanced sorting: relevance (search ranking),\
+    \ engagement (viral potential), \n  quality (editorial), controversy (polarization), trust (credibility)\n\
+    \n### Pagination\n- page: 1 - Page number (default: 1)\n- per_page: 10 - Results per page (default:\
+    \ 10). One response carries at most 25 articles, so a\n  larger per_page is clamped to 25 — use page\
+    \ to walk through more.\n\n### Content Filters\n- is_duplicate: 0 - Exclude duplicates (0=unique,\
+    \ 1=include duplicates)\n- is_paywall: 0 - Exclude paywalled content (0=free, 1=paywall)\n- is_breaking:\
+    \ 1 - Breaking news only\n- read_time: { min: 1, max: 10 } - Filter by reading time (minutes)\n- is_long_read:\
+    \ 1 - Articles with read time >= 5 minutes\n- is_short_read: 1 - Articles with read time < 3 minutes\n\
+    \n### Field Selection (fl)\n- Default (no fl): id, title, href, published_at, description, source.domain\
+    \ — body excluded\n- fl: \"id,title,source.name,published_at\" - Return only specific fields\n- fl:\
+    \ \"title,href,body\" - Ask for the full article text explicitly when you need to read it\n- Supports\
+    \ nested fields with dot notation: source.name, sentiment.overall.score\n\n### Faceting\n- facet:\
+    \ true - Enable faceting\n- facet: { field: \"source.id,language.id,sentiment.overall.polarity\",\
+    \ limit: 20, mincount: 5 }\n- Supported facet fields: source.id, source.country.id, source.bias, category.id,\
+    \ \n  topic.id, industry.id, language.id, author.id, sentiment.*.polarity, is_duplicate, \n  is_free,\
+    \ is_important, media.images.count, media.videos.count, read_time, \n  published.year, published.month,\
+    \ published.day_of_week, published.hour\n\n### Range Faceting\n- facet: { range: { field: \"published_at\"\
+    , start: \"2024-01-01\", end: \"2024-12-31\", gap: \"1MONTH\" } }\n- facet: { range: { field: \"sentiment.overall.score\"\
+    , start: -1, end: 1, gap: 0.25 } }\n- Date gaps: 1HOUR, 1DAY, 1WEEK, 1MONTH, 1YEAR\n- Numeric gaps:\
+    \ 0.1, 0.25, 0.5, 1, 5, 10\n\n### Highlighting\n- hl: true - Enable highlighting\n- hl: { fl: \"title,description,body\"\
+    , fragsize: 300, snippets: 5, \n       tag: { pre: \"<mark>\", post: \"</mark>\" } }\n- Auto-expands\
+    \ search terms using synonyms and morphology\n\nQUERY BUILDING EXAMPLES:\n- Basic search: {title:\
+    \ \"Bitcoin\", language: {code: \"en\"}}\n- Sentiment analysis: {organization: {name: \"Tesla\"},\
+    \ sentiment: {overall: {polarity: \"positive\"}}}\n- High-quality sources: {source: {rank: {opr: {min:\
+    \ 0.7}}}, is_verified_source: 1}\n- Date range (no title filter, so any width): {published_at: {start:\
+    \ \"2024-01-01\", end: \"2024-12-31\"}}\n- Title search over an archive month: {title: \"Bitcoin\"\
+    , published_at: {start: \"2024-01-01\", end: \"2024-01-31\"}}\n- Multiple filters: {title: \"AI\"\
+    , organization: {name: \"Google,Microsoft\"}, language: {code: \"en\"}, is_breaking: 1}\n- With media:\
+    \ {has_image: 1, media: {images: {count: {min: 2}}}}\n- Sorted by engagement: {sort: {by: \"engagement\"\
+    , order: \"desc\"}}\n- With faceting: {facet: true, facet: {field: \"source.id,language.id\", limit:\
+    \ 10}}\n- With highlighting: {title: \"innovation\", hl: true, hl: {fl: \"title,body\"}}\n- Breaking\
+    \ news: {is_breaking: 1, sort: {by: \"published_at\"}}\n- Long-form quality: {is_long_read: 1, sort:\
+    \ {by: \"quality\", order: \"desc\"}}"
 - name: suggest
-  description: Resolve a name or prefix (e.g. "Tesla") to APITube taxonomy IDs — entity.id, category.id
-    (IPTC medtop slugs), topic.id, industry.id — for precise search_news filters.
+  description: "Resolve a name or prefix to APITube taxonomy IDs so you can use them in the `search_news`\
+    \ tool's filters.\n\nThe `search_news` tool's most precise filters require IDs you cannot guess:\n\
+    - entity.id   — numeric (persons, organizations, locations, brands, events...)\n- category.id — IPTC\
+    \ slug, e.g. \"medtop:04000000\"\n- topic.id    — slug\n- industry.id — numeric\n\nUse this tool FIRST\
+    \ to look those IDs up, then pass them into `search_news`.\n\nUSAGE:\n- type: which taxonomy to autocomplete\
+    \ — one of \"entities\", \"categories\", \"topics\", \"industries\".\n- prefix: the name (or its beginning)\
+    \ to search, e.g. \"Tesla\", \"Elon\", \"spo\".\n\nReturns an array of matches; take the `id` of the\
+    \ best match and put it into `search_news`:\n  suggest({ type: \"entities\", prefix: \"Tesla\" })\
+    \ → [{ id: 12345, name: \"Tesla, Inc.\", ... }]\n  search_news({ entity: { id: \"12345\" } })"
 prompts:
 - name: monitor_company
   description: Coverage digest for a company
@@ -79,3 +185,4 @@ tool_quality:
   scored: false
   note: Facts from the saved tools/list capture (mcp_tool_quality.py); recorded, not scored. Checks learned
     from Glimind's agent-readiness audit.
+tools_count: 2
