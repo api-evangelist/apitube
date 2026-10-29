@@ -1,4 +1,4 @@
-# apitube
+# APITube
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -63,3 +63,139 @@
 >
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
+
+APITube is a news data API providing search and retrieval across news articles, top headlines, trends, companies, journalists, and fact-checks, with taxonomy resolution for entities, topics and locations. The public contract is an OpenAPI 3.1 document of 26 operations served from api.apitube.io, authenticated with an API key by header or query parameter. APITube also operates a first-party MCP server at mcp.apitube.io over streamable HTTP, whose tool list is readable anonymously, and publishes an RFC 9727 api-catalog linkset at the apex that names the specification, the documentation, the llms.txt and the MCP server card.
+
+**Areas:** News · Media Monitoring · News API · Fact Check · Journalists
+
+## APITube on APIs.io
+
+Everything profiled for APITube is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/apitube/](https://apis.io/providers/apitube/)** — or go straight to one of the APIs or properties below.
+
+### APIs (7)
+
+- [APITube News API](https://apis.io/apis/apitube/apitube-news-api/) — News search and retrieval — everything, top headlines, trends, companies, journalists, fact-checks and taxonomy suggestion. 26 operations, API key by header…
+- [APITube Account API](https://apis.io/apis/apitube/apitube-account-api/) — API key balance and subscription plan information.
+- [APITube Fact Check API](https://apis.io/apis/apitube/apitube-fact-check-api/) — Verify factual claims against the live news corpus (retrieval-augmented). Returns per-claim verdicts on an 8-level scale with confidence, explanation, and…
+- [APITube Reference API](https://apis.io/apis/apitube/apitube-reference-api/) — The Reference API from APITube — 7 operation(s) for reference.
+- [APITube Suggest API](https://apis.io/apis/apitube/apitube-suggest-api/) — Autocomplete and typeahead suggestions for entities.
+- [APITube System API](https://apis.io/apis/apitube/apitube-system-api/) — Health checks and service status.
+- [APITube Utilities API](https://apis.io/apis/apitube/apitube-utilities-api/) — Helper endpoints for building queries
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Apitube Webhooks](https://apis.io/asyncapis/apitube/apitube-webhooks/)
+
+#### MCP servers (2)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [apitube-mcp-server-card.json](https://apis.io/servers/apitube/apitube-mcp-server-card-json/)
+- [APITube News MCP-Server](https://apis.io/servers/apitube/apitube-news-mcp-server/)
+
+#### Overlays (7)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Apitube Account Api Overlay](https://apis.io/overlays/apitube/apitube-account-api-overlay/)
+- [Apitube Fact Check Api Overlay](https://apis.io/overlays/apitube/apitube-fact-check-api-overlay/)
+- [Apitube News Api Overlay](https://apis.io/overlays/apitube/apitube-news-api-overlay/)
+- [Apitube Reference Api Overlay](https://apis.io/overlays/apitube/apitube-reference-api-overlay/)
+- [Apitube Suggest Api Overlay](https://apis.io/overlays/apitube/apitube-suggest-api-overlay/)
+- [Apitube System Api Overlay](https://apis.io/overlays/apitube/apitube-system-api-overlay/)
+- [Apitube Utilities Api Overlay](https://apis.io/overlays/apitube/apitube-utilities-api-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Apitube Authentication](https://apis.io/security/apitube/apitube-authentication/)
+- [Apitube Domain Security](https://apis.io/security/apitube/apitube-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Apitube Plans Pricing](https://apis.io/plans/apitube/apitube-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Apitube Rate Limits](https://apis.io/rate-limits/apitube/apitube-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://apitube.io)
+- [Getting started](https://apitube.io/product/news-api/quick-start)
+- [Pricing](https://apitube.io/pricing)
+- [Sign up](https://apitube.io/#sign-up)
+- [Support](https://apitube.io/contact)
+- [Blog](https://apitube.io/blog)
+- [Terms of service](https://apitube.io/terms/terms-of-service)
+- [Privacy policy](https://apitube.io/terms/privacy-policy)
+- [GitHub](https://github.com/apitube)
+- [Status](https://status.apitube.io/)
+
+## API Evangelist rating
+
+**Kin Score 62.1** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 71.7 |
+| Contract quality | 60.1 |
+| Contract governance | 4.5 |
+| Operational transparency | 65.8 |
+| Developer ergonomics | 81.0 |
+| Access clarity | 69.7 |
+
+**Agent readiness 42.9** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | yes |
+| Well Known Catalog | yes |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | — |
+
+**Regulatory alignment 24.5** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/apitube/](https://apis.io/providers/apitube/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for APITube: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/apitube/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
